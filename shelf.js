@@ -7,9 +7,9 @@
  * 
  * http://amplifyjs.com
  */
-(function( amplify, undefined ){
+(function( shelf, undefined ){
 
-	var store = amplify.store = function( key, value, options, type ) {
+	var store = shelf.store = function( key, value, options, type ) {
 		var type = store.type;
 		if ( options && options.type && options.type in store.types ) {
 			type = options.type;
@@ -32,10 +32,10 @@
 		};
 	}
 	store.error = function() {
-		return "amplify.store quota exceeded"; 
+		return "shelf.store quota exceeded"; 
 	};
 	
-	var rprefix = /^__amplify__/;
+	var rprefix = /^__shelf__/;
 	function createFromStorageInterface( storageType, storage ) {
 		store.addType( storageType, function( key, value, options ) {
 			var storedValue, parsed, i, remove,
@@ -72,7 +72,7 @@
 			}
 	
 			// protect against name collisions with direct storage
-			key = "__amplify__" + key;
+			key = "__shelf__" + key;
 	
 			if ( value === undefined ) {
 				storedValue = storage.getItem( key );
@@ -150,7 +150,7 @@
 	
 		// append to html instead of body so we can do this from the head
 		var div = document.createElement( "div" ),
-			attrKey = "amplify";
+			attrKey = "shelf";
 		div.style.display = "none";
 		document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
 	
@@ -602,4 +602,4 @@
 		});
 	}() );
 
-}( this.amplify = this.amplify || {} ) );
+}( this );
