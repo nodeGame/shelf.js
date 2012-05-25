@@ -1,42 +1,55 @@
 /*!
- * Amplify Store - Persistent Client-Side Storage @VERSION
+ * Shelf.JS - Persistent Client-Side Storage @VERSION
  * 
- * Copyright 2011 appendTo LLC. (http://appendto.com/team)
- * Dual licensed under the MIT or GPL licenses.
- * http://appendto.com/open-source-licenses
+ * Copyright 2012 Stefano Balietti
+ * GPL licenses.
  * 
- * http://amplifyjs.com
  */
-(function( shelf, undefined ){
+(function( wall, undefined ){
 
-	var store = shelf.store = function( key, value, options, type ) {
+	
+	var version = '0.1';
+	
+	var store = wall.store = function( key, value, options, type ) {
 		var type = store.type;
 		if ( options && options.type && options.type in store.types ) {
 			type = options.type;
 		}
-		return store.types[ type ]( key, value, options || {} );
+		
+		if (store.verbosity) {
+			store.log('I am using storage type ' + type);
+		}
+		
+		return store.types[type](key, value, options || {} );
 	};
 	
+	// Adding functions and properties to store
+	///////////////////////////////////////////
+	store.verbosity = 0;
 	store.types = {};
 	store.type = null;
-	store.addType = function( type, storage ) {
+	store.addType = function (type, storage) {
 		if ( !store.type ) {
 			store.type = type;
 		}
 	
-		store.types[ type ] = storage;
-		store[ type ] = function( key, value, options ) {
+		store.types[type] = storage;
+		store[type] = function (key, value, options) {
 			options = options || {};
 			options.type = type;
 			return store( key, value, options );
 		};
-	}
-	store.error = function() {
-		return "shelf.store quota exceeded"; 
 	};
+	store.error = function() {
+		return "shelf quota exceeded"; 
+	};
+	store.log = function(text) {
+		console.log('Shelf v.' + version + ': ' + text);
+	};
+	/////////////////////////////////////////////
 	
 	var rprefix = /^__shelf__/;
-	function createFromStorageInterface( storageType, storage ) {
+	function createFromStorageInterface(storageType, storage) {
 		store.addType( storageType, function( key, value, options ) {
 			var storedValue, parsed, i, remove,
 				ret = value,
@@ -114,8 +127,8 @@
 	for ( var webStorageType in { localStorage: 1, sessionStorage: 1 } ) {
 		// try/catch for file protocol in Firefox
 		try {
-			if ( window[ webStorageType ].getItem ) {
-				createFromStorageInterface( webStorageType, window[ webStorageType ] );
+			if (window[webStorageType].getItem) {
+				createFromStorageInterface(webStorageType, window[webStorageType]);
 			}
 		} catch( e ) {}
 	}
@@ -261,7 +274,7 @@
 				expiresAt: null,
 				path: '/',
 				domain:  null,
-				secure: false
+				secure: false,
 			};
 			
 			/**
@@ -284,7 +297,7 @@
 						expiresAt: defaultOptions.expiresAt,
 						path: defaultOptions.path,
 						domain: defaultOptions.domain,
-						secure: defaultOptions.secure
+						secure: defaultOptions.secure,
 					};
 	
 					if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ) {
@@ -344,24 +357,19 @@
 					pair = separated[i].split( '=' );
 					name = pair[0].replace( /^\s*/, '' ).replace( /\s*$/, '' );
 	
-					try
-					{
+					try {
 						value = decodeURIComponent( pair[1] );
 					}
-					catch( e1 )
-					{
+					catch( e1 ) {
 						value = pair[1];
 					}
 	
-					if( typeof JSON === 'object' && JSON !== null && typeof JSON.parse === 'function' )
-					{
-						try
-						{
+					if (typeof JSON === 'object' && JSON !== null && typeof JSON.parse === 'function' ) {
+						try {
 							unparsedValue = value;
 							value = JSON.parse( value );
 						}
-						catch( e2 )
-						{
+						catch (e2) {
 							value = unparsedValue;
 						}
 					}
@@ -602,4 +610,4 @@
 		});
 	}() );
 
-}( this );
+}( this ));
