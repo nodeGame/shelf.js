@@ -46,6 +46,16 @@
 	store.log = function(text) {
 		console.log('Shelf v.' + version + ': ' + text);
 	};
+	
+	Object.defineProperty(store, 'persistant', {
+    	set: function(){},
+    	get: function(){
+    		// If we have only memory type enabled 
+    		return (store.types.length < 2) ? false : true;
+    	},
+    	configurable: false,
+	});
+	
 	/////////////////////////////////////////////
 	
 	var rprefix = /^__shelf__/;
