@@ -7,21 +7,27 @@ Shelf.JS is a mesh-up of `amplify.store` and the `cookies` library.
  
  
 It combines the best of the two and adds some other features in order to offer
-persistent storage capabilities in the browsers.
+persistent storage capabilities in the browsers. 
 
+## amplify.store
+
+amplify.store is a wrapper for various persistent client-side storage systems. amplify.store supports IE 5+, Firefox 2+, Safari 4+, Chrome, Opera 10.5+, iPhone 2+, Android 2+ and provides a consistent API to handle storage cross-browser.
+
+amplify.store is meant to allow you to utilize all the latest storage technologies for those browsers that have them, while gracefully degrading for those without support. 
+
+## cookies library
+
+This is a Javascript library for accessing and manipulating HTTP cookies in the web browser. You can get one or a list of cookies, set cookies, delete cookies, test if the browser accepts cookies. When JSON support is available, any JS value can be set to a cookie--it will be automatically serialized before being written to the cookie.
 
 # Basic Usage
-
 
 
 ```javascript
   
   // Store something on the shelf
-  
   store('foo', {foo: 'bar'}, {});
 
   // Grab something from the shelf
-  
   store('foo');
   // {foo: 'bar'}
   
@@ -29,6 +35,10 @@ persistent storage capabilities in the browsers.
   if (!store.persistent) {
     alert('Browser storage and cookies are currently disabled');
   }
+  
+  // Storing something on a specific shelf
+  store.cookie(foo2, {foo2: 'bar2'});
+  
 ```
 
 # License
