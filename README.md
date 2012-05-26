@@ -19,8 +19,9 @@ amplify.store is meant to allow you to utilize all the latest storage technologi
 
 This is a Javascript library for accessing and manipulating HTTP cookies in the web browser. You can get one or a list of cookies, set cookies, delete cookies, test if the browser accepts cookies. When JSON support is available, any JS value can be set to a cookie--it will be automatically serialized before being written to the cookie.
 
-# Basic Usage
+# Usage
 
+## Basic
 
 ```javascript
   
@@ -36,7 +37,7 @@ This is a Javascript library for accessing and manipulating HTTP cookies in the 
   
 ```
 
-# Checkings and configuration
+## Checkings and configuration
 
 ```javascript
 
