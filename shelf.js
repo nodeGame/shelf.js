@@ -47,7 +47,7 @@
 		console.log('Shelf v.' + version + ': ' + text);
 	};
 	
-	Object.defineProperty(store, 'persistant', {
+	Object.defineProperty(store, 'persistent', {
     	set: function(){},
     	get: function(){
     		// If we have only memory type enabled 
@@ -111,7 +111,7 @@
 				} else {
 					parsed = JSON.stringify({
 						data: value,
-						expires: options.expires ? now + options.expires : null
+						expires: options.expires ? now + options.expires : null,
 					});
 					try {
 						storage.setItem( key, parsed );
@@ -134,7 +134,7 @@
 	
 	// localStorage + sessionStorage
 	// IE 8+, Firefox 3.5+, Safari 4+, Chrome 4+, Opera 10.5+, iPhone 2+, Android 2+
-	for ( var webStorageType in { localStorage: 1, sessionStorage: 1 } ) {
+	for ( var webStorageType in { localStorage: 1, sessionStorage: 1, } ) {
 		// try/catch for file protocol in Firefox
 		try {
 			if (window[webStorageType].getItem) {
@@ -552,8 +552,6 @@
 		
 			store.addType( "cookie", function (key, value, options) {
 				
-				console.log('AAAAAH! cookie');
-				
 				if ('undefined' === typeof key) {
 					return cookie.get();
 				}
@@ -587,8 +585,6 @@
 		}
 	
 		store.addType( "memory", function( key, value, options ) {
-			
-			console.log('AAAAAH! memory');
 			
 			if ( !key ) {
 				return copy( memory );
