@@ -24,21 +24,33 @@ This is a Javascript library for accessing and manipulating HTTP cookies in the 
 
 ```javascript
   
-  // Store something on the shelf
+  // Store something on the first shelf available
   store('foo', {foo: 'bar'}, {});
 
   // Grab something from the shelf
   store('foo');
   // {foo: 'bar'}
   
+  // Storing something on a specific shelf
+  store.cookie(foo2, {foo2: 'bar2'});
+  
+```
+
+# Checkings and configuration
+
+```javascript
+
   // Check whether the browser offers persistent storage
   if (!store.persistent) {
     alert('Browser storage and cookies are currently disabled');
   }
   
-  // Storing something on a specific shelf
-  store.cookie(foo2, {foo2: 'bar2'});
+  // Check / set verbosity level
+  store.verbosity = 1;
   
+  // Check / set default shelf
+  store.type = 'memory';
+
 ```
 
 # License
