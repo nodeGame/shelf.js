@@ -8,7 +8,7 @@
 (function( wall, undefined ){
 
 	
-	var version = '0.1';
+	var version = '0.2';
 	
 	var store = wall.store = function( key, value, options, type ) {
 		var type = store.type;
@@ -56,6 +56,41 @@
     	configurable: false,
 	});
 	
+	store.decycle = function(o) {
+    	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+			o = JSON.decycle(o);
+		}
+    	return o;
+    };
+	    
+    store.retrocycle = function(o) {
+    	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+			o = JSON.retrocycle(o);
+		}
+    	return o;
+    };
+	
+    store.stringify = function(o) {
+    	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
+    		throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
+		}
+    	
+    	o = store.decycle(o);
+		return JSON.stringify(o);
+    };
+    
+    store.parse = function(o) {
+    	if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
+    		try {
+    			o = JSON.parse(o);
+    		}
+    		catch (e) {}
+		}
+    	
+    	o = store.retrocycle(o);
+    	return o;
+    };
+    
 	/////////////////////////////////////////////
 	
 	var rprefix = /^__shelf__/;
@@ -79,7 +114,7 @@
 	
 					while ( key = storage.key( i++ ) ) {
 						if ( rprefix.test( key ) ) {
-							parsed = JSON.parse( storage.getItem( key ) );
+							parsed = store.parse( storage.getItem( key ) );
 							if ( parsed.expires && parsed.expires <= now ) {
 								remove.push( key );
 							} else {
@@ -97,9 +132,10 @@
 			// protect against name collisions with direct storage
 			key = "__shelf__" + key;
 	
+
 			if ( value === undefined ) {
 				storedValue = storage.getItem( key );
-				parsed = storedValue ? JSON.parse( storedValue ) : { expires: -1 };
+				parsed = storedValue ? store.parse( storedValue ) : { expires: -1 };
 				if ( parsed.expires && parsed.expires <= now ) {
 					storage.removeItem( key );
 				} else {
@@ -109,7 +145,7 @@
 				if ( value === null ) {
 					storage.removeItem( key );
 				} else {
-					parsed = JSON.stringify({
+					parsed = store.stringify({
 						data: value,
 						expires: options.expires ? now + options.expires : null,
 					});
@@ -200,7 +236,7 @@
 				remove = [];
 				i = 0;
 				while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
-					parsed = JSON.parse( attr.value );
+					parsed = store.parse( attr.value );
 					if ( parsed.expires && parsed.expires <= now ) {
 						remove.push( attr.name );
 					} else {
@@ -224,7 +260,7 @@
 	
 			if ( value === undefined ) {
 				attr = div.getAttribute( key );
-				parsed = attr ? JSON.parse( attr ) : { expires: -1 };
+				parsed = attr ? store.parse( attr ) : { expires: -1 };
 				if ( parsed.expires && parsed.expires <= now ) {
 					div.removeAttribute( key );
 				} else {
@@ -236,7 +272,7 @@
 				} else {
 					// we need to get the previous value in case we need to rollback
 					prevValue = div.getAttribute( key );
-					parsed = JSON.stringify({
+					parsed = store.stringify({
 						data: value,
 						expires: (options.expires ? (now + options.expires) : null)
 					});
@@ -374,17 +410,17 @@
 						value = pair[1];
 					}
 	
-					if (typeof JSON === 'object' && JSON !== null && typeof JSON.parse === 'function' ) {
-						try {
-							unparsedValue = value;
-							value = JSON.parse( value );
-						}
-						catch (e2) {
-							value = unparsedValue;
-						}
-					}
+//					if (JSON && 'object' === typeof JSON && 'function' === typeof JSON.parse) {
+//						try {
+//							unparsedValue = value;
+//							value = JSON.parse( value );
+//						}
+//						catch (e2) {
+//							value = unparsedValue;
+//						}
+//					}
 	
-					cookies[name] = value;
+					cookies[name] = store.parse(value);
 				}
 				return cookies;
 			};
@@ -467,12 +503,15 @@
 				}
 	
 				else if (typeof value !== 'string'){
-					if( typeof JSON === 'object' && JSON !== null && typeof JSON.stringify === 'function' ){
-						value = JSON.stringify( value );
-					}
-					else {
-						throw new Error( 'cookies.set() received non-string value and could not serialize.' );
-					}
+//					if( typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function' ) {
+//						
+//						value = JSON.stringify( value );
+//					}
+//					else {
+//						throw new Error( 'cookies.set() received non-string value and could not serialize.' );
+//					}
+					
+					value = store.stringify( value );
 				}
 	
 	
@@ -571,9 +610,6 @@
 		}
 	}());
 	
-	
-	
-	
 	// in-memory storage
 	// fallback for all browsers to enable the API even if we can't persist data
 	(function() {
@@ -581,7 +617,7 @@
 			timeout = {};
 	
 		function copy( obj ) {
-			return obj === undefined ? undefined : JSON.parse( JSON.stringify( obj ) );
+			return obj === undefined ? undefined : store.parse( store.stringify( obj ) );
 		}
 	
 		store.addType( "memory", function( key, value, options ) {
