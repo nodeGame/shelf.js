@@ -1,6 +1,6 @@
 # Shelf.JS
 
-Shelf.JS is a mesh-up of `amplify.store` and the `cookies` library.
+Shelf.JS is a mesh-up of `amplify.store` and the `cookies` library
 
  - http://amplifyjs.com/
  - http://code.google.com/p/cookies/
@@ -8,6 +8,10 @@ Shelf.JS is a mesh-up of `amplify.store` and the `cookies` library.
  
 It combines the best of the two and adds some other features in order to offer
 persistent storage capabilities in the browsers. 
+
+Morever, if Douglas Crockford's  `JSON-js cycle.js` library is available, also cyclic objects can be serialized.
+
+- https://github.com/douglascrockford/JSON-js
 
 ## amplify.store
 
