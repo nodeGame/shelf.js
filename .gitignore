@@ -1,4 +1,4 @@
 .project
 .settings
 
-/test # for now..
+node_modules/
