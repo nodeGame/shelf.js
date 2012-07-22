@@ -1,6 +1,36 @@
-// Cycles
+// INIT
+////////
 
-//var store = window.store;
+
+// Objects
+///////////
+
+var obj_simple = {
+			a: 1,
+			b: 2,
+			c: 3,
+		};
+
+var obj_complex = {
+	a: 1,
+	b: obj_simple,
+	c: 3,
+};
+
+var obj_with_null = {
+	a: 1,
+	b: null,
+	c: 3,
+};
+
+var obj_falsy = {
+	a: 0,
+	b: false,
+	c: 3,
+};
+
+// Cycles
+//////////
 
 var base_cycle = {
 		a: 1,
@@ -19,6 +49,7 @@ c2.ac = base_cycle.c;
 c2.aa = base_cycle.b;
 
 var cycles = [c1, c2];
+
 
 var testStoreDelete = function(d, k, v, u) {
 	
@@ -40,9 +71,17 @@ var testStoreDelete = function(d, k, v, u) {
 	});
 };
 
+// TEST
+////////
+
+
 it('store is found', function() {
 	expect(store).to.exist;
 });
+
+
+// BEGIN
+/////////
 
 describe('Primitive types', function(){
 
@@ -57,31 +96,7 @@ describe('Primitive types', function(){
 });
 
 describe('Objects', function(){
-	
-	var obj_simple = {
-			a: 1,
-			b: 2,
-			c: 3,
-		};
-
-	var obj_complex = {
-		a: 1,
-		b: obj_simple,
-		c: 3,
-	};
-
-	var obj_with_null = {
-		a: 1,
-		b: null,
-		c: 3,
-	};
-
-	var obj_falsy = {
-		a: 0,
-		b: false,
-		c: 3,
-	};
-	
+		
 	testStoreDelete('Simple Obj', 'so', obj_simple, obj_complex);
 	
 	testStoreDelete('Complex Obj', 'oc', obj_complex, obj_simple);
@@ -89,6 +104,17 @@ describe('Objects', function(){
 	testStoreDelete('Object with Nulls', 'on', obj_with_null, obj_simple);
 	
 	testStoreDelete('Falsy Obj', 'of', obj_falsy, obj_simple);
+
+});
+
+describe('Array of Objects', function(){
+		
+	var a1 = [obj_simple, obj_complex];
+	var a2 = [obj_with_null, obj_falsy];
+	
+	testStoreDelete('Array S-C', 'asc', a1, a2);
+	
+	testStoreDelete('Array N-F', 'oc', a2, a1);
 
 });
 
