@@ -613,6 +613,54 @@
 		}
 	}());
 	
+	// <!-- if node -->
+	// ## File System storage
+	// ### Available only in Node.JS
+//	(function() {
+//
+//		if ('undefined' !== typeof module && 'undefined' !== typeof module.exports) {
+//			return;
+//		} 
+//		
+//		var fs = require('fs'),
+//			path = require('path');
+//		
+//		var file = {},
+//			timeout = {};
+//
+//		store.addType("fs", function(key, value, options) {
+//			
+//			if (!key) {
+//				return load(file);
+//			}
+//	
+//			if (value === undefined) {
+//				return load(key);
+//			}
+//	
+//			if (timeout[key]) {
+//				clearTimeout(timeout[key]);
+//				delete timeout[key];
+//			}
+//	
+//			if (value === null) {
+//				delete memory[key];
+//				return null;
+//			}
+//	
+//			memory[key] = value;
+//			if (options.expires) {
+//				timeout[key] = setTimeout(function() {
+//					delete memory[key];
+//					delete timeout[key];
+//				}, options.expires);
+//			}
+//	
+//			return value;
+//		});
+//	}());
+	// <!-- end node -->
+	
 	// ## In-memory storage
 	// ### fallback for all browsers to enable the API even if we can't persist data
 	(function() {
