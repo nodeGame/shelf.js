@@ -1,10 +1,6 @@
 #!/usr/bin/env node
 
 /**
- * Export build function
- */
-
-/**
  * Module dependencies.
  */
 
@@ -13,7 +9,7 @@ var program = require('commander'),
     pkg = require('../package.json'),
     version = pkg.version;
 
-var build = require('./build.js').build;
+var build = require('./build.shelf.js').build;
 
 program
   .version(version)
