@@ -15,7 +15,7 @@ var version = '0.3';
 
 var store = exports.store = function (key, value, options, type) {
 	options = options || {};
-	var type = (options.type && options.type in store.types) ? options.type : store.type;
+	type = (options.type && options.type in store.types) ? options.type : store.type;
 		
 	if (store.verbosity > 0) {
 		store.log('I am using storage type ' + type);

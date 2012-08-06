@@ -12,16 +12,20 @@ var program = require('commander'),
 var build = require('./build.js').build;
 
 program
-  .version(version)
-  .command('build')
+  .version(version);
+
+program
+  .command('build [options]')
   .description('Creates a custom build of shelf.js')
-  .option('-c', '--cycle', 'Build with addons')
-  .option('-j', '--json', 'Build with JSON support for old browsers')
-  .option('-fs', '--fs', 'Build with file system writing support')
-  .option('-s', '--standard', 'Build with support for cyclic objects')
+  .option('-c, --cycle', 'with support cyclic objects serialization')
+  .option('-j, --json', 'with JSON support for old browsers')
+  .option('-f, --fs', 'with file system writing support')
   .option('-a, --all', 'Full build of Shelf.js')
-  .option('-d, --doc', 'Build doc')
-  .action(build);
+  .option('-A, --analyse', 'analyse build')
+  .option('-o, --output <file>', 'output file (without .js)')
+  .action(function(env, options){
+		build(options);
+});
    
 
 // Parsing options
