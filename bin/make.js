@@ -5,11 +5,11 @@
  */
 
 var program = require('commander'),
-    os = require('os')
+    os = require('os'),
     pkg = require('../package.json'),
     version = pkg.version;
 
-var build = require('./build.shelf.js').build;
+var build = require('./build.js').build;
 
 program
   .version(version)
