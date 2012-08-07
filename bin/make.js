@@ -23,7 +23,6 @@ program
   .description('Creates a custom build of shelf.js')
   .option('-c, --cycle', 'with support cyclic objects serialization')
   .option('-j, --json', 'with JSON support for old browsers')
-  .option('-f, --fs', 'with file system writing support')
   .option('-l, --lib <items>', 'choose libraries to include', list)
   .option('-a, --all', 'Full build of Shelf.js')
   .option('-A, --analyse', 'analyse build')
@@ -43,20 +42,20 @@ program
 		output: "shelf-full",
 	});
 	build({
-		browser: true,
+		lib: ['amplify','cookie'],
 		output: "shelf-browser",
 	});
 	build({
-		amplify: true,
+		lib: ['amplify'],
 		output: "shelf-amplify",
 	});
 	build({
-		cookie: true,
+		lib: ['cookie'],
 		output: "shelf-cookie",
 	});
 	build({
-		node: true,
-		output: "shelf-node",
+		lib: ['fs'],
+		output: "shelf-fs",
 	});
 	
 });
