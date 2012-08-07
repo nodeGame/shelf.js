@@ -60,11 +60,11 @@ program
 	
 });
 
-program
-.command('doc')
-.description('Builds documentation files')
-.action(function(){
-	console.log('This command is temporarily disabled.');
+//program
+//.command('doc')
+//.description('Builds documentation files')
+//.action(function(){
+//	console.log('This command is temporarily disabled.');
 	//console.log('Building documentation for Shelf.js v.' + version);
 	// http://nodejs.org/api.html#_child_processes
 //	var root =  __dirname + '/../';
@@ -76,7 +76,7 @@ program
 //			console.log('build error: ' + error);
 //		}
 //	});
-});
+//});
 
 // Parsing options
 program.parse(process.argv);

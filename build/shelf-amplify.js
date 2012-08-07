@@ -100,9 +100,6 @@ store.parse = function(o) {
 	return o;
 };
 
-//if (window) {
-//	//
-//}
 
 if ('object' === typeof module && 'function' === typeof require) {
 	require('./lib/shelf.fs.js');
@@ -154,12 +151,13 @@ if ('object' === typeof module && 'function' === typeof require) {
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 
 /**
- * ## Browser storage for Shelf.js
+ * ## Amplify storage for Shelf.js
  * 
  */
 
 (function(exports) {
 
+var store = exports.store;	
 
 //var rprefix = /^__shelf__/;
 var regex = new RegExp("^" + store.name); 

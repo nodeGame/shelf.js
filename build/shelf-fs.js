@@ -100,9 +100,6 @@ store.parse = function(o) {
 	return o;
 };
 
-//if (window) {
-//	//
-//}
 
 if ('object' === typeof module && 'function' === typeof require) {
 	require('./lib/shelf.fs.js');
