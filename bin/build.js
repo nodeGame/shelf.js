@@ -1,23 +1,37 @@
 var	smoosh = require('smoosh'),
+	fs = require('fs'),
     path = require('path'),
+    J = require('JSUS').JSUS,
     pkg = require('../package.json'),
     version = pkg.version;
 
 
 module.exports.build = buildIt;
 
+var buildName = function(lib) {
+	return 'shelf.' + lib.toLowerCase() + '.js';
+};
+
 function buildIt(options) {
 	
-	console.log('Building NDDB v.' + version + ' with:');
+	console.log('Building Shelf.js v.' + version + ' with:');
 	
-	// Defining variables
+//	console.log(options)
 	
-	var re = new RegExp('node_modules.+');
+	// output file
+	var out = options.output || "shelf";
 	
+	if (path.extname(out) === '.js') {
+		out = path.basename(out, '.js');
+	}
+	
+	
+	// Defining variables	
 	var rootDir = __dirname + '/../';
+	var libDir = rootDir + 'lib/';
 	var distDir =  rootDir + 'build/';
-	
-	//cyclic objects support
+		
+	//JSON support
 	var shelf_json = [
 	  rootDir + "node_modules/JSON/json2.js",           
 	];
@@ -33,10 +47,17 @@ function buildIt(options) {
 	  rootDir + "shelf.js",           
 	];
 	
-	//shelf.js
-	var shelf_fs = [
-	  rootDir + "lib/shelf.fs.js",
-	];
+	//shelf libs
+	var shelflibs = {};
+	var files = fs.readdirSync(libDir);
+	for (var i in files) {
+		if (path.extname(files[i]) === '.js') {
+			var name = path.basename(files[i], '.js').substr(6).toLowerCase();
+			shelflibs[name] = libDir + files[i];
+		}
+	}
+
+	
 	
 	// CREATING build array
 	var files = [];
@@ -55,15 +76,31 @@ function buildIt(options) {
 	
 	
 	// 2. Shelf.js
+	console.log('  - shelf.js core');
 	files = files.concat(shelf);
 	
-	// 3. Shelf.fs.js
-	if (options.fs || options.all) {
-	  console.log('  - fs');
-	  files = files.concat(shelf_fs);
+	// 3. Last: shelf libs
+
+	if (!options.lib || options.all) {
+		console.log('  - shelf.js all libs');
+		files = files.concat(J.obj2Array(shelflibs));
 	}
-	
-	console.log('Adding ' + files.length + ' files');
+	else { 
+		var selected = options.lib;
+		for (var i in selected) {
+			if (selected.hasOwnProperty(i)) {
+				if (!('string' === typeof selected[i])) continue;
+				var name = selected[i];
+				if (shelflibs[name]) {
+					console.log('  - shelf.js lib: ' + selected[i]);
+					files.push(shelflibs[name]);
+				}
+				else {
+					console.log('  - ERR: shelf.js lib not found: ' + name);
+				}
+			}
+		}
+	}
 	
 	// Configurations for file smooshing.
 	var config = {
@@ -78,22 +115,25 @@ function buildIt(options) {
 	    
 	    JAVASCRIPT: {
 	        DIST_DIR: '/' + distDir,
-	        
-	        "shelf": files
 	    }
 	};
 	
-	var run_it = function(){
-	    // Smooshing callback chain
-	    // More information on how it behaves can be found in the smoosh Readme https://github.com/fat/smoosh
-	    smoosh
-	        .config(config) // hand over configurations made above
-	        // .clean() // removes all files out of the nodegame folder
-	        .run() // runs jshint on full build
-	        .build() // builds both uncompressed and compressed files
-	        .analyze(); // analyzes everything
+	config.JAVASCRIPT[out] = files;
 	
-	    console.log('shelf.js created');
+	var run_it = function(){
+		// Smooshing callback chain
+	    // More information on how it behaves can be found in the smoosh Readme https://github.com/fat/smoosh
+	    var smooshed = smoosh
+	    	.config(config) // hand over configurations made above
+	    	// .clean() // removes all files out of the nodegame folder
+	    	.build(); // builds both uncompressed and compressed files
+	        
+    	if (options.analyse) {
+    		smooshed.run(); // runs jshint on full build
+    		smooshed.analyze(); // analyzes everything
+    	}
+	
+	    console.log('Shelf.js build created!');
 	}
 	
 	run_it();
