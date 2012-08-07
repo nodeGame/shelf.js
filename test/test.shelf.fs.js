@@ -1,4 +1,4 @@
-var store = require('./../shelf.js').store,
+var store = require('./../build/shelf-fs.js').store,
 	expect = require('expect.js'),
 	path = require('path'),
 	fs = require('fs');
@@ -55,6 +55,7 @@ c2.aa = base_cycle.b;
 var cycles = [c1, c2];
 
 var filename = './shelf.out';
+
 var deleteIfExist = function() {
 	if (fs.existsSync(filename)) {
 		fs.unlink(filename, function (err) {

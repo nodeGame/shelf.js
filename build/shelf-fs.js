@@ -100,11 +100,6 @@ store.parse = function(o) {
 	return o;
 };
 
-
-if ('object' === typeof module && 'function' === typeof require) {
-	require('./lib/shelf.fs.js');
-}
-
 // ## In-memory storage
 // ### fallback for all browsers to enable the API even if we can't persist data
 (function() {
@@ -159,7 +154,12 @@ if ('object' === typeof module && 'function' === typeof require) {
 (function(exports) {
 	
 var store = exports.store;
-if (!store) return;
+
+if (!store) {
+	console.log('ERR: shelf.js not found');
+	return;
+}
+	
 
 
 var fs = require('fs'),
@@ -298,4 +298,4 @@ store.addType("fs", function(key, value, options) {
 	return value;
 });
 
-}(module.parent.exports));
+}(('undefined' !== typeof module.exports.store) ? module.exports : module.parent.exports));

@@ -25,7 +25,9 @@
       "expect.js": ">= 0.1.2"
     }
   , "licenses": [
-    { "type": "MIT" }
+    { "type": "MIT" },
+    { "type": "GPL" }
   ]
-  
+  , "engines": { "node": ">= 0.8.0" }
+
 }

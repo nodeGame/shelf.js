@@ -100,11 +100,6 @@ store.parse = function(o) {
 	return o;
 };
 
-
-if ('object' === typeof module && 'function' === typeof require) {
-	require('./lib/shelf.fs.js');
-}
-
 // ## In-memory storage
 // ### fallback for all browsers to enable the API even if we can't persist data
 (function() {
