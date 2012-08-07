@@ -63,13 +63,13 @@ function buildIt(options) {
 	var files = [];
 	
 	// 0. JSON
-	if (options.json || options.all || options.standard) {
+	if (options.json || options.all) {
 	  console.log('  - json');
 	  files = files.concat(shelf_json);
 	}
 	
 	// 1. Cycle
-	if (options.cycle || options.all || options.standard) {
+	if (options.cycle || options.all) {
 	  console.log('  - cycle');
 	  files = files.concat(shelf_cycle);
 	}
