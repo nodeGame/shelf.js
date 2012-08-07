@@ -46,8 +46,7 @@ node make.js build -l amplify,cookie // manually select libraries
 
 ```javascript
 node make.js --help
-
-
+```
 
 ## Usage
 
