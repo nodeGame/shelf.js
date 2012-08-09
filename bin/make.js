@@ -1,15 +1,51 @@
 #!/usr/bin/env node
 
+// Shelf.js make script
+
 /**
  * Module dependencies.
  */
 
 var program = require('commander'),
     os = require('os'),
+    fs = require('fs'),
+    path = require('path'),
     pkg = require('../package.json'),
     version = pkg.version;
 
 var build = require('./build.js').build;
+
+var buildDir =  __dirname + '/../build/';
+
+var deleteIfExist = function(file) {
+	file = file || filename;
+	if (path.existsSync(file)) {
+		var stats = fs.lstatSync(file);
+		if (stats.isDirectory()) {
+			fs.rmdir(file, function (err) {
+				if (err) throw err;  
+			});
+		}
+		else {
+			fs.unlink(file, function (err) {
+				if (err) throw err;  
+			});
+		}
+		
+	}
+};
+
+var cleanBuildDir = function(dir, ext) {
+	ext = ext || '.js';
+	dir = dir || buildDir;
+	if (dir[dir.length] !== '/') dir = dir + '/';
+	fs.readdir(dir, function(err, files) {
+	    files.filter(function(file) { return path.extname(file) ===  ext; })
+	         .forEach(function(file) { deleteIfExist(dir + file); });
+	    
+	    console.log('Build directory cleaned');
+	});
+}
 
 function list(val) {
 	return val.split(',');
@@ -18,16 +54,24 @@ function list(val) {
 program
   .version(version);
 
+program  
+	.command('clean')
+	.description('Removes all files from build folder')
+	.action(function(){
+		cleanBuildDir();
+});
+
 program
-  .command('build [options]')
-  .description('Creates a custom build of shelf.js')
-  .option('-c, --cycle', 'with support cyclic objects serialization')
-  .option('-j, --json', 'with JSON support for old browsers')
-  .option('-l, --lib <items>', 'choose libraries to include', list)
-  .option('-a, --all', 'Full build of Shelf.js')
-  .option('-A, --analyse', 'analyse build')
-  .option('-o, --output <file>', 'output file (without .js)')
-  .action(function(env, options){
+  	.command('build [options]')
+  	.description('Creates a custom build of shelf.js')
+  	.option('-c, --cycle', 'with support cyclic objects serialization')
+  	.option('-j, --json', 'with JSON support for old browsers')
+  	.option('-l, --lib <items>', 'choose libraries to include', list)
+  	.option('-a, --all', 'Full build of Shelf.js')
+  	.option('-C, --clean', 'clean build directory')
+  	.option('-A, --analyse', 'analyse build')
+  	.option('-o, --output <file>', 'output file (without .js)')
+  	.action(function(env, options){
 		build(options);
 });
    
