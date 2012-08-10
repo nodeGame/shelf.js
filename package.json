@@ -1,6 +1,6 @@
 {
     "name": "shelf.js"
-  , "description": "A powerful wrapper library for persistent objects in the browser"
+  , "description": "A modular, powerful wrapper library for persistent objects in the browser and Node.js"
   , "version": "0.2.1"
   , "main" : "shelf.js"
   , "homepage": "http://nodegame.org"
