@@ -16,10 +16,11 @@ var version = '0.3';
 var store = exports.store = function (key, value, options, type) {
 	options = options || {};
 	type = (options.type && options.type in store.types) ? options.type : store.type;
-		
-	if (store.verbosity > 0) {
-		store.log('I am using storage type ' + type);
+	if (!type || !store.types[type]) {
+		store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
+		return;
 	}
+	store.log('Accessing ' + type + ' storage');
 	
 	return store.types[type](key, value, options);
 };
@@ -28,21 +29,38 @@ var store = exports.store = function (key, value, options, type) {
 ///////////////////////////////////////////
 store.name = "__shelf__";
 
-store.verbosity = 0;
+store.verbosity = 10;
 store.types = {};
-store.type = null;
+
+var mainStorageType = null;
+
+Object.defineProperty(store, 'type', {
+	set: function(type){
+		if ('undefined' === typeof store.types[type]) {
+			store.log('Cannot set store.type to an invalid type: ' + type);
+			return false;
+		}
+		mainStorageType = type;
+		return type;
+	},
+	get: function(){
+		return mainStorageType;
+	},
+	configurable: false,
+	enumerable: true,
+});
 
 store.addType = function (type, storage) {
-	if (!store.type) {
-		store.type = type;
-	}
-
 	store.types[type] = storage;
 	store[type] = function (key, value, options) {
 		options = options || {};
 		options.type = type;
 		return store(key, value, options);
 	};
+	
+	if (!store.type || store.type === "volatile") {
+		store.type = type;
+	}
 };
 
 store.error = function() {
@@ -50,14 +68,18 @@ store.error = function() {
 };
 
 store.log = function(text) {
-	console.log('Shelf v.' + version + ': ' + text);
+	if (store.verbosity > 0) {
+		console.log('Shelf v.' + version + ': ' + text);
+	}
+	
 };
 
 Object.defineProperty(store, 'persistent', {
 	set: function(){},
 	get: function(){
-		// If we have only memory type enabled 
-		return (store.types.length < 2) ? false : true;
+		if (!store.types.length) return false;
+		if (store.types.length === 1 && store.type === "volatile") return false;
+		return true;
 	},
 	configurable: false,
 });
@@ -92,7 +114,8 @@ store.parse = function(o) {
 			o = JSON.parse(o);
 		}
 		catch (e) {
-			store.log('Error while parsing a value', 'ERR');
+			store.log('Error while parsing a value: ' + e, 'ERR');
+			store.log(o);
 		}
 	}
 	
@@ -153,6 +176,16 @@ store.parse = function(o) {
 (function(exports) {
 
 var store = exports.store;	
+
+if (!store) {
+	console.log('amplify.shelf.js: shelf.js core not found. Amplify storage not available.');
+	return;
+}
+
+if ('undefined' === typeof window) {
+	console.log('amplify.shelf.js: am I running in a browser? Amplify storage not available.');
+	return;
+}
 
 //var rprefix = /^__shelf__/;
 var regex = new RegExp("^" + store.name); 
