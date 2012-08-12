@@ -27,7 +27,7 @@ function buildIt(options) {
 	
 	
 	// Defining variables	
-	var rootDir = __dirname + '/../';
+	var rootDir = path.resolve(__dirname, '..') + '/';
 	var libDir = rootDir + 'lib/';
 	var distDir =  rootDir + 'build/';
 		

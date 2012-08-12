@@ -683,7 +683,7 @@ var store = exports.store = function (key, value, options, type) {
 ///////////////////////////////////////////
 store.name = "__shelf__";
 
-store.verbosity = 10;
+store.verbosity = 0;
 store.types = {};
 
 var mainStorageType = null;
