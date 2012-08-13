@@ -1,7 +1,7 @@
 {
     "name": "shelf.js"
   , "description": "A modular, powerful wrapper library for persistent objects in the browser and Node.js"
-  , "version": "0.3.1"
+  , "version": "0.3.2"
   , "main" : "shelf.js"
   , "homepage": "http://nodegame.org"
   , "keywords": ["persistance", "localStorage", "decycle", "browser storage", "storage", "database"]
@@ -28,6 +28,6 @@
     { "type": "MIT" },
     { "type": "GPL" }
   ]
-  , "engines": { "node": ">= 0.8.0" }
+  , "engines": { "node": ">= 0.6.0" }
 
 }

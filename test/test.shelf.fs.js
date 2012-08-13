@@ -57,7 +57,14 @@ var cycles = [c1, c2];
 var filename = './shelf.out';
 
 var deleteIfExist = function() {
-	if (fs.existsSync(filename)) {
+	if ('undefined' !== typeof fs.existsSync) {
+		if (fs.existsSync(filename)) {
+			fs.unlink(filename, function (err) {
+				if (err) throw err;  
+			});
+		}
+	}
+	else if (path.existsSync(this.logdir)) {
 		fs.unlink(filename, function (err) {
 			if (err) throw err;  
 		});
