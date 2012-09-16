@@ -33,8 +33,10 @@ function buildIt(options) {
 	var distDir =  rootDir + 'build/';
 		
 	//JSON support
+	var JSONDir = J.resolveModuleDir('JSON', __dirname);
+	
 	var shelf_json = [
-	  rootDir + "node_modules/JSON/json2.js",           
+	  JSONDir + "json2.js",           
 	];
 	
 	
