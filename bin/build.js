@@ -1,8 +1,9 @@
 var	smoosh = require('smoosh'),
 	fs = require('fs'),
     path = require('path'),
-    J = require('JSUS').JSUS,
-    pkg = require('../package.json'),
+    J = require('JSUS').JSUS;
+
+var pkg = require('../package.json'),
     version = pkg.version;
 
 
