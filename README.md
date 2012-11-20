@@ -71,7 +71,7 @@ node make.js --help
 ```javascript
 
   // Check whether the browser offers persistent storage
-  if (!store.persistent) {
+  if (!store.isPersistent()) {
     alert('Browser storage and cookies are currently disabled');
   }
   
