@@ -30,7 +30,7 @@ This is a Javascript library for accessing and manipulating HTTP cookies in the 
 
 ### file system support
 
-Native file system writing and reading support is offered through Node.js fs api.
+Native file system writing and reading support is offered through Node.js fs api. Support is still experimental.
 
 ## Build
 

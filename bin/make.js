@@ -10,42 +10,15 @@ var program = require('commander'),
     os = require('os'),
     fs = require('fs'),
     path = require('path'),
-    pkg = require('../package.json'),
+    J = require('JSUS').JSUS;
+
+var pkg = require('../package.json'),
     version = pkg.version;
 
 var build = require('./build.js').build;
 
-var buildDir =  __dirname + '/../build/';
-
-var deleteIfExist = function(file) {
-	file = file || filename;
-	if (path.existsSync(file)) {
-		var stats = fs.lstatSync(file);
-		if (stats.isDirectory()) {
-			fs.rmdir(file, function (err) {
-				if (err) throw err;  
-			});
-		}
-		else {
-			fs.unlink(file, function (err) {
-				if (err) throw err;  
-			});
-		}
-		
-	}
-};
-
-var cleanBuildDir = function(dir, ext) {
-	ext = ext || '.js';
-	dir = dir || buildDir;
-	if (dir[dir.length] !== '/') dir = dir + '/';
-	fs.readdir(dir, function(err, files) {
-	    files.filter(function(file) { return path.extname(file) ===  ext; })
-	         .forEach(function(file) { deleteIfExist(dir + file); });
-	    
-	    console.log('Build directory cleaned');
-	});
-}
+var rootDir = path.resolve(__dirname, '..') + '/';
+var buildDir = rootDir + 'build/';
 
 function list(val) {
 	return val.split(',');

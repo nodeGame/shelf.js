@@ -1,8 +1,9 @@
 var	smoosh = require('smoosh'),
 	fs = require('fs'),
     path = require('path'),
-    J = require('JSUS').JSUS,
-    pkg = require('../package.json'),
+    J = require('JSUS').JSUS;
+
+var pkg = require('../package.json'),
     version = pkg.version;
 
 
@@ -32,8 +33,10 @@ function buildIt(options) {
 	var distDir =  rootDir + 'build/';
 		
 	//JSON support
+	var JSONDir = J.resolveModuleDir('JSON', __dirname);
+	
 	var shelf_json = [
-	  rootDir + "node_modules/JSON/json2.js",           
+	  JSONDir + "json2.js",           
 	];
 	
 	

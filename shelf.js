@@ -10,7 +10,7 @@
  * 
  */
 (function(exports){
-
+	
 var version = '0.3';
 
 var store = exports.store = function (key, value, options, type) {
@@ -35,6 +35,7 @@ store.types = {};
 
 var mainStorageType = null;
 
+<<<<<<< HEAD
 //if Object.defineProperty works...
 try {	
 	
