@@ -35,7 +35,6 @@ store.types = {};
 
 var mainStorageType = null;
 
-<<<<<<< HEAD
 //if Object.defineProperty works...
 try {	
 	
