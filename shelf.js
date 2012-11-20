@@ -33,7 +33,7 @@ store.verbosity = 0;
 store.types = {};
 
 
-var mainStorageType = null;
+var mainStorageType = "volatile";
 
 //if Object.defineProperty works...
 try {	
@@ -83,8 +83,8 @@ store.log = function(text) {
 };
 
 store.isPersistent = function() {
-	if (!store.types.length) return false;
-	if (store.types.length === 1 && store.type === "volatile") return false;
+	if (!store.types) return false;
+	if (store.type === "volatile") return false;
 	return true;
 };
 
