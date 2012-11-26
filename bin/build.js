@@ -135,7 +135,8 @@ function buildIt(options) {
 	    
 	    // builds both uncompressed and compressed files
 	    smooshed.build(); 
-	        
+	   
+	   
     	if (options.analyse) {
     		smooshed.run(); // runs jshint on full build
     		smooshed.analyze(); // analyzes everything
