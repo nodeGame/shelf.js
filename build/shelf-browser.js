@@ -47,7 +47,7 @@ Object.defineProperty(store, 'type', {
 		return mainStorageType;
 	},
 	configurable: false,
-	enumerable: true,
+	enumerable: true
 });
 
 store.addType = function (type, storage) {
@@ -81,7 +81,7 @@ Object.defineProperty(store, 'persistent', {
 		if (store.types.length === 1 && store.type === "volatile") return false;
 		return true;
 	},
-	configurable: false,
+	configurable: false
 });
 
 store.decycle = function(o) {
@@ -242,7 +242,7 @@ function createFromStorageInterface(storageType, storage) {
 			} else {
 				parsed = store.stringify({
 					data: value,
-					expires: options.expires ? now + options.expires : null,
+					expires: options.expires ? now + options.expires : null
 				});
 				try {
 					storage.setItem(key, parsed);
@@ -265,7 +265,7 @@ function createFromStorageInterface(storageType, storage) {
 
 // ## localStorage + sessionStorage
 // IE 8+, Firefox 3.5+, Safari 4+, Chrome 4+, Opera 10.5+, iPhone 2+, Android 2+
-for (var webStorageType in { localStorage: 1, sessionStorage: 1, }) {
+for (var webStorageType in { localStorage: 1, sessionStorage: 1 }) {
 	// try/catch for file protocol in Firefox
 	try {
 		if (window[webStorageType].getItem) {
@@ -432,7 +432,7 @@ var cookie = (function() {
 		expiresAt: null,
 		path: '/',
 		domain:  null,
-		secure: false,
+		secure: false
 	};
 	
 	/**
@@ -455,7 +455,7 @@ var cookie = (function() {
 				expiresAt: defaultOptions.expiresAt,
 				path: defaultOptions.path,
 				domain: defaultOptions.domain,
-				secure: defaultOptions.secure,
+				secure: defaultOptions.secure
 			};
 
 			if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {

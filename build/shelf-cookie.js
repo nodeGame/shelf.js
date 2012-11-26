@@ -47,7 +47,7 @@ Object.defineProperty(store, 'type', {
 		return mainStorageType;
 	},
 	configurable: false,
-	enumerable: true,
+	enumerable: true
 });
 
 store.addType = function (type, storage) {
@@ -81,7 +81,7 @@ Object.defineProperty(store, 'persistent', {
 		if (store.types.length === 1 && store.type === "volatile") return false;
 		return true;
 	},
-	configurable: false,
+	configurable: false
 });
 
 store.decycle = function(o) {
@@ -193,7 +193,7 @@ var cookie = (function() {
 		expiresAt: null,
 		path: '/',
 		domain:  null,
-		secure: false,
+		secure: false
 	};
 	
 	/**
@@ -216,7 +216,7 @@ var cookie = (function() {
 				expiresAt: defaultOptions.expiresAt,
 				path: defaultOptions.path,
 				domain: defaultOptions.domain,
-				secure: defaultOptions.secure,
+				secure: defaultOptions.secure
 			};
 
 			if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
