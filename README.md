@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/shakty/shelf.js.png?branch=master)](https://travis-ci.org/shakty/shelf.js)
 
-
 Shelf.js is a unified api to write safely key-value pairs to a persistent storage either in the browser or in Node.js environment.
 
 The api abstract from the actual storage medium, and gracefully degrades to the next one available.
