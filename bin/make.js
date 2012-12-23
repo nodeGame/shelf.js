@@ -77,23 +77,5 @@ program
 	
 });
 
-//program
-//.command('doc')
-//.description('Builds documentation files')
-//.action(function(){
-//	console.log('This command is temporarily disabled.');
-	//console.log('Building documentation for Shelf.js v.' + version);
-	// http://nodejs.org/api.html#_child_processes
-//	var root =  __dirname + '/../';
-//	var command = root + 'node_modules/.bin/docker -i ' + root + ' index.js init.node.js nodeGame.js lib/ addons/ -o ' + root + 'docs/';
-//	var child = exec(command, function (error, stdout, stderr) {
-//		util.print(stdout);
-//		util.print(stderr);
-//		if (error !== null) {
-//			console.log('build error: ' + error);
-//		}
-//	});
-//});
-
 // Parsing options
 program.parse(process.argv);
