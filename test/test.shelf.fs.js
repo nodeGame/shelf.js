@@ -1,7 +1,7 @@
 var store = require('./../build/shelf-fs.js').store,
 	expect = require('expect.js'),
 	path = require('path'),
-	fs = require('fs');
+	fs = require('fs-ext');
 
 
 store.type = 'fs';
@@ -58,24 +58,33 @@ var filename = __dirname + '/shelf.out';
 
 store.filename = filename;
 
-var deleteIfExist = function() {
+var deleteIfExist = function(cb) {
 	if ('undefined' !== typeof fs.existsSync) {
 		if (fs.existsSync(filename)) {
-			fs.unlink(filename, function (err) {
-				if (err) throw err;  
+			fs.unlink(filename, function (err, cb) {
+				if (err) throw err;
+				if (cb) cb();
 			});
 		}
+		else {
+			if (cb) cb();
+		}
 	}
-	else if (path.existsSync(this.logdir)) {
-		fs.unlink(filename, function (err) {
+	else if (path.existsSync(filename)) {
+		fs.unlink(filename, function (err, cb) {
 			if (err) throw err;  
+			if (cb) cb();
 		});
+	}
+	else {
+		if (cb) cb();
 	}
 };
 
 var testStoreDelete = function(d, k, v, u) {
 	
 	describe(d, function(){
+		
 		it('store [' + k + ': ' + v + ']', function() {
 			store(k, v);
 			expect(store(k)).to.eql(v);
@@ -101,7 +110,6 @@ it('store is found', function() {
 	expect(store).to.exist;
 });
 
-
 // BEGIN
 /////////
 
@@ -110,6 +118,7 @@ describe('Primitive types', function(){
 	before(function() {
 		deleteIfExist();
 	});
+
 	
 	testStoreDelete('String', 'test', 'foo', 'foo2');
 	
@@ -121,52 +130,54 @@ describe('Primitive types', function(){
 	
 });
 
-//describe('Objects', function(){
-//		
-//	before(function() {
-//		deleteIfExist();
-//	});
-//	
-//	testStoreDelete('Simple Obj', 'so', obj_simple, obj_complex);
-//	
-//	testStoreDelete('Complex Obj', 'oc', obj_complex, obj_simple);
-//	
-//	testStoreDelete('Object with Nulls', 'on', obj_with_null, obj_simple);
-//	
-//	testStoreDelete('Falsy Obj', 'of', obj_falsy, obj_simple);
-//
-//});
-//
-//describe('Array of Objects', function(){
-//		
-//	before(function() {
-//		deleteIfExist();
-//	});
-//	
-//	var a1 = [obj_simple, obj_complex];
-//	var a2 = [obj_with_null, obj_falsy];
-//	
-//	testStoreDelete('Array S-C', 'asc', a1, a2);
-//	
-//	testStoreDelete('Array N-F', 'oc', a2, a1);
-//
-//});
-//
-//describe('Cyclic objects', function(){
-//	
-//	before(function() {
-//		deleteIfExist();
-//	});
-//	after(function() {
-//		deleteIfExist();
-//	});
-//	it('JSON.decycle and JSON.retrocycle are found', function() {
-//		expect(JSON).to.exist;
-//		expect(JSON.decycle).to.exist;
-//		expect(JSON.retrocycle).to.exist;
-//	});
-//	
-//	testStoreDelete('Cycle', 'cycle', c1, c2);
-//});
+describe('Objects', function(){
+		
+	before(function() {
+		deleteIfExist();
+	});	
+	
+	testStoreDelete('Simple Obj', 'so', obj_simple, obj_complex);
+	
+	testStoreDelete('Complex Obj', 'oc', obj_complex, obj_simple);
+	
+	testStoreDelete('Object with Nulls', 'on', obj_with_null, obj_simple);
+	
+	testStoreDelete('Falsy Obj', 'of', obj_falsy, obj_simple);
+
+});
+
+describe('Array of Objects', function(){
+		
+	before(function() {
+		deleteIfExist();
+	});
+	
+	var a1 = [obj_simple, obj_complex];
+	var a2 = [obj_with_null, obj_falsy];
+	
+	testStoreDelete('Array S-C', 'asc', a1, a2);
+	
+	testStoreDelete('Array N-F', 'oc', a2, a1);
+
+});
+
+describe('Cyclic objects', function(){
+	
+	before(function() {
+		deleteIfExist();
+	});
+	after(function() {
+		deleteIfExist();
+	});
+	
+	it('JSON.decycle and JSON.retrocycle are found', function() {
+		expect(JSON).to.exist;
+		expect(JSON.decycle).to.exist;
+		expect(JSON.retrocycle).to.exist;
+	});
+	
+	testStoreDelete('Cycle', 'cycle', c1, c2);
+});
 
 
+// LAST TEST MUST HAVE AFTER(DELETEALL)

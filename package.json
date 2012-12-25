@@ -17,7 +17,8 @@
       "JSUS": ">= 0.6.3",
       "smoosh": "0.4.0",
       "commander": "1.0.0",
-      "JSON": "1.0.0"
+      "JSON": "1.0.0",
+      "fs-ext": "0.2.3"
     }
   , "devDependencies": {
       "mocha": ">= 0.3.0",
