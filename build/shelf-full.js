@@ -1442,7 +1442,7 @@ var counter = 0;
 
 store.filename = './shelf.out';
 
-var fs = require('fs-ext'),
+var fs = require('fs'),
 	path = require('path'),
 	util = require('util');
 
