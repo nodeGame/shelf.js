@@ -1600,12 +1600,9 @@ else {
 		
 
 
-		fs.open(file, 'a', 666, function( e, id ) {
-			fs.write( id, item, null, 'utf8', function(){
-				fs.close(id, function(){});
-			});
-		});
-		
+		var fd = fs.openSync(file, 'a', '0666');
+		fs.writeSync(fd, item, null, 'utf8');
+		fs.closeSync(fd);
 		return true;
 	};
 }
