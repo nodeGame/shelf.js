@@ -1,7 +1,7 @@
 var store = require('./../build/shelf-fs.js').store,
 	expect = require('expect.js'),
 	path = require('path'),
-	fs = require('fs-ext');
+	fs = require('fs');
 
 
 store.type = 'fs';
