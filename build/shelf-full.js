@@ -159,6 +159,7 @@
 // Create a JSON object only if one does not already exist. We create the
 // methods in a closure to avoid creating global variables.
 
+
 var JSON;
 if (!JSON) {
     JSON = {};
@@ -487,7 +488,12 @@ if (!JSON) {
     }
 
     global.JSON = JSON;
-    module.exports = JSON;
+    
+    // 10.05.2013 mod for browsers compatibility
+    if (JSUS.isNodeJS()) {
+        module.exports = JSON;
+    }
+
 }());
 
 // cycle.js
