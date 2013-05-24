@@ -27,13 +27,6 @@ function list(val) {
 program
   .version(version);
 
-program  
-	.command('clean')
-	.description('Removes all files from build folder')
-	.action(function(){
-		cleanBuildDir();
-});
-
 program
   	.command('build [options]')
   	.description('Creates a custom build of shelf.js')

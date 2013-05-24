@@ -122,28 +122,28 @@ function buildIt(options) {
 	};
 	
 	config.JAVASCRIPT[out] = files;
-	
+
 	var run_it = function(){
 		// https://github.com/fat/smoosh
 		// hand over configurations made above
 	    var smooshed = smoosh.config(config);
-	    
+
 	    // removes all files from the build folder
 	    if (options.clean) {
 	    	smooshed.clean();
 	    }
-	    
+
 	    // builds both uncompressed and compressed files
-	    smooshed.build(); 
-	   
-	   
+	    smooshed.build();
+
+
     	if (options.analyse) {
     		smooshed.run(); // runs jshint on full build
     		smooshed.analyze(); // analyzes everything
     	}
-	
+
 	    console.log('Shelf.js build created!');
-	}
+	};
 	
 	run_it();
 }

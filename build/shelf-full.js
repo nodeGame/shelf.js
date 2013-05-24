@@ -1173,7 +1173,7 @@ if (cookie.test()) {
  * 
  * Important! When updating to next Amplify.JS release, remember to change 
  * 
- * JSON.stringify -> stor.strinfigy
+ * JSON.stringify -> store.stringify
  * 
  * to keep support for ciclyc objects
  * 
@@ -1245,7 +1245,7 @@ function createFromStorageInterface( storageType, storage ) {
 			if ( value === null ) {
 				storage.removeItem( key );
 			} else {
-				parsed = store.strinfigy({
+				parsed = store.stringify({
 					data: value,
 					expires: options.expires ? now + options.expires : null
 				});
@@ -1375,7 +1375,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
 			} else {
 				// we need to get the previous value in case we need to rollback
 				prevValue = div.getAttribute( key );
-				parsed = store.strinfigy({
+				parsed = store.stringify({
 					data: value,
 					expires: (options.expires ? (now + options.expires) : null)
 				});
@@ -1415,6 +1415,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
 
 }(this));
+
 /**
  * ## File System storage for Shelf.js
  * 
