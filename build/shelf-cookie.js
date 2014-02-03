@@ -1,322 +1,322 @@
 /**
  * # Shelf.JS 
- * 
- * Persistent Client-Side Storage @VERSION
- * 
- * Copyright 2012 Stefano Balietti
+ * Copyright 2014 Stefano Balietti
  * GPL licenses.
+ *
+ * Persistent Client-Side Storage
  * 
  * ---
- * 
  */
 (function(exports){
-	
-var version = '0.3';
+    
+    var version = '0.5';
 
-var store = exports.store = function (key, value, options, type) {
+    var store = exports.store = function(key, value, options, type) {
 	options = options || {};
 	type = (options.type && options.type in store.types) ? options.type : store.type;
 	if (!type || !store.types[type]) {
-		store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
-		return;
+	    store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
+	    return;
 	}
 	store.log('Accessing ' + type + ' storage');
 	
 	return store.types[type](key, value, options);
-};
+    };
 
-// Adding functions and properties to store
-///////////////////////////////////////////
-store.name = "__shelf__";
+    // Adding functions and properties to store
+    ///////////////////////////////////////////
+    store.prefix = "__shelf__";
 
-store.verbosity = 0;
-store.types = {};
+    store.verbosity = 0;
+    store.types = {};
 
 
-var mainStorageType = "volatile";
+    var mainStorageType = "volatile";
 
-//if Object.defineProperty works...
-try {	
+    //if Object.defineProperty works...
+    try {	
 	
 	Object.defineProperty(store, 'type', {
-		set: function(type){
-			if ('undefined' === typeof store.types[type]) {
-				store.log('Cannot set store.type to an invalid type: ' + type);
-				return false;
-			}
-			mainStorageType = type;
-			return type;
-		},
-		get: function(){
-			return mainStorageType;
-		},
-		configurable: false,
-		enumerable: true
+	    set: function(type){
+		if ('undefined' === typeof store.types[type]) {
+		    store.log('Cannot set store.type to an invalid type: ' + type);
+		    return false;
+		}
+		mainStorageType = type;
+		return type;
+	    },
+	    get: function(){
+		return mainStorageType;
+	    },
+	    configurable: false,
+	    enumerable: true
 	});
-}
-catch(e) {
+    }
+    catch(e) {
 	store.type = mainStorageType; // default: memory
-}
+    }
 
-store.addType = function (type, storage) {
+    store.addType = function(type, storage) {
 	store.types[type] = storage;
-	store[type] = function (key, value, options) {
-		options = options || {};
-		options.type = type;
-		return store(key, value, options);
+	store[type] = function(key, value, options) {
+	    options = options || {};
+	    options.type = type;
+	    return store(key, value, options);
 	};
 	
 	if (!store.type || store.type === "volatile") {
-		store.type = type;
+	    store.type = type;
 	}
-};
+    };
 
-// TODO: create unit test
-store.onquotaerror = undefined;
-store.error = function() {	
+    // TODO: create unit test
+    store.onquotaerror = undefined;
+    store.error = function() {	
 	console.log("shelf quota exceeded"); 
 	if ('function' === typeof store.onquotaerror) {
-		store.onquotaerror(null);
+	    store.onquotaerror(null);
 	}
-};
+    };
 
-store.log = function(text) {
+    store.log = function(text) {
 	if (store.verbosity > 0) {
-		console.log('Shelf v.' + version + ': ' + text);
+	    console.log('Shelf v.' + version + ': ' + text);
 	}
 	
-};
+    };
 
-store.isPersistent = function() {
+    store.isPersistent = function() {
 	if (!store.types) return false;
 	if (store.type === "volatile") return false;
 	return true;
-};
+    };
 
-//if Object.defineProperty works...
-try {	
+    //if Object.defineProperty works...
+    try {	
 	Object.defineProperty(store, 'persistent', {
-		set: function(){},
-		get: store.isPersistent,
-		configurable: false
+	    set: function(){},
+	    get: store.isPersistent,
+	    configurable: false
 	});
-}
-catch(e) {
+    }
+    catch(e) {
 	// safe case
 	store.persistent = false;
-}
+    }
 
-store.decycle = function(o) {
+    store.decycle = function(o) {
 	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
-		o = JSON.decycle(o);
+	    o = JSON.decycle(o);
 	}
 	return o;
-};
+    };
     
-store.retrocycle = function(o) {
+    store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
-		o = JSON.retrocycle(o);
+	    o = JSON.retrocycle(o);
 	}
 	return o;
-};
+    };
 
-store.stringify = function(o) {
+    store.stringify = function(o) {
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
-		throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
+	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
 	
 	o = store.decycle(o);
 	return JSON.stringify(o);
-};
+    };
 
-store.parse = function(o) {
+    store.parse = function(o) {
 	if ('undefined' === typeof o) return undefined;
 	if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
-		try {
-			o = JSON.parse(o);
-		}
-		catch (e) {
-			store.log('Error while parsing a value: ' + e, 'ERR');
-			store.log(o);
-		}
+	    try {
+		o = JSON.parse(o);
+	    }
+	    catch (e) {
+		store.log('Error while parsing a value: ' + e, 'ERR');
+		store.log(o);
+	    }
 	}
 	
 	o = store.retrocycle(o);
 	return o;
-};
+    };
 
-// ## In-memory storage
-// ### fallback for all browsers to enable the API even if we can't persist data
-(function() {
+    // ## In-memory storage
+    // ### fallback for all browsers to enable the API even if we can't persist data
+    (function() {
 	
 	var memory = {},
-		timeout = {};
+	timeout = {};
 	
 	function copy(obj) {
-		return store.parse(store.stringify(obj));
+	    return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-		
-		if (!key) {
-			return copy(memory);
-		}
+	    
+	    if (!key) {
+		return copy(memory);
+	    }
 
-		if (value === undefined) {
-			return copy(memory[key]);
-		}
+	    if (value === undefined) {
+		return copy(memory[key]);
+	    }
 
-		if (timeout[key]) {
-			clearTimeout(timeout[key]);
-			delete timeout[key];
-		}
+	    if (timeout[key]) {
+		clearTimeout(timeout[key]);
+		delete timeout[key];
+	    }
 
-		if (value === null) {
-			delete memory[key];
-			return null;
-		}
+	    if (value === null) {
+		delete memory[key];
+		return null;
+	    }
 
-		memory[key] = value;
-		if (options.expires) {
-			timeout[key] = setTimeout(function() {
-				delete memory[key];
-				delete timeout[key];
-			}, options.expires);
-		}
+	    memory[key] = value;
+	    if (options.expires) {
+		timeout[key] = setTimeout(function() {
+		    delete memory[key];
+		    delete timeout[key];
+		}, options.expires);
+	    }
 
-		return value;
+	    return value;
 	});
-}());
+    }());
 
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## Cookie storage for Shelf.js
+ * Copyright 2015 Stefano Balietti
  * 
+ * Original library from:
+ * See http://code.google.com/p/cookies/
  */
-
 (function(exports) {
 
-var store = exports.store;
-	
-if (!store) {
-	console.log('cookie.shelf.js: shelf.js core not found. Cookie storage not available.');
-	return;
-}
+    var store = exports.store;
+    
+    if (!store) {
+	throw new Error('cookie.shelf.js: shelf.js core not found.');
+    }
 
-if ('undefined' === typeof window) {
-	console.log('cookie.shelf.js: am I running in a browser? Cookie storage not available.');
-	return;
-}
+    if ('undefined' === typeof window) {
+	throw new Error('cookie.shelf.js: window object not found.');
+    }
 
-var cookie = (function() {
+    var cookie = (function() {
 	
-	var resolveOptions, assembleOptionsString, parseCookies, constructor, defaultOptions = {
-		expiresAt: null,
-		path: '/',
-		domain:  null,
-		secure: false
+	var resolveOptions, assembleOptionsString, parseCookies, constructor;
+        var defaultOptions = {
+	    expiresAt: null,
+	    path: '/',
+	    domain:  null,
+	    secure: false
 	};
 	
 	/**
-	* resolveOptions - receive an options object and ensure all options are present and valid, replacing with defaults where necessary
-	*
-	* @access private
-	* @static
-	* @parameter Object options - optional options to start with
-	* @return Object complete and valid options object
-	*/
+	 * resolveOptions - receive an options object and ensure all options
+         * are present and valid, replacing with defaults where necessary
+	 *
+	 * @access private
+	 * @static
+	 * @parameter Object options - optional options to start with
+	 * @return Object complete and valid options object
+	 */
 	resolveOptions = function(options){
-		
-		var returnValue, expireDate;
+	    
+	    var returnValue, expireDate;
 
-		if(typeof options !== 'object' || options === null){
-			returnValue = defaultOptions;
+	    if(typeof options !== 'object' || options === null){
+		returnValue = defaultOptions;
+	    }
+	    else {
+		returnValue = {
+		    expiresAt: defaultOptions.expiresAt,
+		    path: defaultOptions.path,
+		    domain: defaultOptions.domain,
+		    secure: defaultOptions.secure
+		};
+
+		if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
+		    returnValue.expiresAt = options.expiresAt;
 		}
-		else {
-			returnValue = {
-				expiresAt: defaultOptions.expiresAt,
-				path: defaultOptions.path,
-				domain: defaultOptions.domain,
-				secure: defaultOptions.secure
-			};
-
-			if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
-				returnValue.expiresAt = options.expiresAt;
-			}
-			else if (typeof options.hoursToLive === 'number' && options.hoursToLive !== 0){
-				expireDate = new Date();
-				expireDate.setTime(expireDate.getTime() + (options.hoursToLive * 60 * 60 * 1000));
-				returnValue.expiresAt = expireDate;
-			}
-
-			if (typeof options.path === 'string' && options.path !== '') {
-				returnValue.path = options.path;
-			}
-
-			if (typeof options.domain === 'string' && options.domain !== '') {
-				returnValue.domain = options.domain;
-			}
-
-			if (options.secure === true) {
-				returnValue.secure = options.secure;
-			}
+		else if (typeof options.hoursToLive === 'number' && options.hoursToLive !== 0){
+		    expireDate = new Date();
+		    expireDate.setTime(expireDate.getTime() + (options.hoursToLive * 60 * 60 * 1000));
+		    returnValue.expiresAt = expireDate;
 		}
 
-		return returnValue;
+		if (typeof options.path === 'string' && options.path !== '') {
+		    returnValue.path = options.path;
+		}
+
+		if (typeof options.domain === 'string' && options.domain !== '') {
+		    returnValue.domain = options.domain;
+		}
+
+		if (options.secure === true) {
+		    returnValue.secure = options.secure;
+		}
+	    }
+
+	    return returnValue;
 	};
 	
 	/**
-	* assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
-	*
-	* @access private
-	* @static
-	* @parameter options OBJECT - optional options to start with
-	* @return STRING - complete and valid cookie setting options
-	*/
+	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
+	 *
+	 * @access private
+	 * @static
+	 * @parameter options OBJECT - optional options to start with
+	 * @return STRING - complete and valid cookie setting options
+	 */
 	assembleOptionsString = function (options) {
-		options = resolveOptions(options);
+	    options = resolveOptions(options);
 
-		return (
-			(typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ? '; expires=' + options.expiresAt.toGMTString() : '') +
-			'; path=' + options.path +
-			(typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
-			(options.secure === true ? '; secure' : '')
-		);
+	    return (
+		(typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ? '; expires=' + options.expiresAt.toGMTString() : '') +
+		    '; path=' + options.path +
+		    (typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
+		    (options.secure === true ? '; secure' : '')
+	    );
 	};
 	
 	/**
-	* parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
-	*
-	* @access private
-	* @static
-	* @return OBJECT - hash of cookies from document.cookie
-	*/
+	 * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
+	 *
+	 * @access private
+	 * @static
+	 * @return OBJECT - hash of cookies from document.cookie
+	 */
 	parseCookies = function() {
-		var cookies = {}, i, pair, name, value, separated = document.cookie.split(';'), unparsedValue;
-		for(i = 0; i < separated.length; i = i + 1){
-			pair = separated[i].split('=');
-			name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
+	    var cookies = {}, i, pair, name, value, separated = document.cookie.split(';'), unparsedValue;
+	    for(i = 0; i < separated.length; i = i + 1){
+		pair = separated[i].split('=');
+		name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
 
-			try {
-				value = decodeURIComponent(pair[1]);
-			}
-			catch(e1) {
-				value = pair[1];
-			}
-
-//						if (JSON && 'object' === typeof JSON && 'function' === typeof JSON.parse) {
-//							try {
-//								unparsedValue = value;
-//								value = JSON.parse(value);
-//							}
-//							catch (e2) {
-//								value = unparsedValue;
-//							}
-//						}
-
-			cookies[name] = store.parse(value);
+		try {
+		    value = decodeURIComponent(pair[1]);
 		}
-		return cookies;
+		catch(e1) {
+		    value = pair[1];
+		}
+
+                //						if (JSON && 'object' === typeof JSON && 'function' === typeof JSON.parse) {
+                //							try {
+                //								unparsedValue = value;
+                //								value = JSON.parse(value);
+                //							}
+                //							catch (e2) {
+                //								value = unparsedValue;
+                //							}
+                //						}
+
+		cookies[name] = store.parse(value);
+	    }
+	    return cookies;
 	};
 
 	constructor = function(){};
@@ -330,28 +330,28 @@ var cookie = (function() {
 	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
 	 */
 	constructor.prototype.get = function(cookieName) {
-		
-		var returnValue, item, cookies = parseCookies();
+	    
+	    var returnValue, item, cookies = parseCookies();
 
-		if(typeof cookieName === 'string') {
-			returnValue = (typeof cookies[cookieName] !== 'undefined') ? cookies[cookieName] : null;
+	    if(typeof cookieName === 'string') {
+		returnValue = (typeof cookies[cookieName] !== 'undefined') ? cookies[cookieName] : null;
+	    }
+	    else if (typeof cookieName === 'object' && cookieName !== null) {
+		returnValue = {};
+		for (item in cookieName) {
+		    if (typeof cookies[cookieName[item]] !== 'undefined') {
+			returnValue[cookieName[item]] = cookies[cookieName[item]];
+		    }
+		    else {
+			returnValue[cookieName[item]] = null;
+		    }
 		}
-		else if (typeof cookieName === 'object' && cookieName !== null) {
-			returnValue = {};
-			for (item in cookieName) {
-				if (typeof cookies[cookieName[item]] !== 'undefined') {
-					returnValue[cookieName[item]] = cookies[cookieName[item]];
-				}
-				else {
-					returnValue[cookieName[item]] = null;
-				}
-			}
-		}
-		else {
-			returnValue = cookies;
-		}
+	    }
+	    else {
+		returnValue = cookies;
+	    }
 
-		return returnValue;
+	    return returnValue;
 	};
 	
 	/**
@@ -362,19 +362,19 @@ var cookie = (function() {
 	 * @return Mixed - Object:hash of cookies whose names match the RegExp
 	 */
 	constructor.prototype.filter = function (cookieNameRegExp) {
-		var cookieName, returnValue = {}, cookies = parseCookies();
+	    var cookieName, returnValue = {}, cookies = parseCookies();
 
-		if (typeof cookieNameRegExp === 'string') {
-			cookieNameRegExp = new RegExp(cookieNameRegExp);
+	    if (typeof cookieNameRegExp === 'string') {
+		cookieNameRegExp = new RegExp(cookieNameRegExp);
+	    }
+
+	    for (cookieName in cookies) {
+		if (cookieName.match(cookieNameRegExp)) {
+		    returnValue[cookieName] = cookies[cookieName];
 		}
+	    }
 
-		for (cookieName in cookies) {
-			if (cookieName.match(cookieNameRegExp)) {
-				returnValue[cookieName] = cookies[cookieName];
-			}
-		}
-
-		return returnValue;
+	    return returnValue;
 	};
 	
 	/**
@@ -387,31 +387,31 @@ var cookie = (function() {
 	 * @return void
 	 */
 	constructor.prototype.set = function(cookieName, value, options){
-		if (typeof options !== 'object' || options === null) {
-			options = {};
-		}
+	    if (typeof options !== 'object' || options === null) {
+		options = {};
+	    }
 
-		if (typeof value === 'undefined' || value === null) {
-			value = '';
-			options.hoursToLive = -8760;
-		}
+	    if (typeof value === 'undefined' || value === null) {
+		value = '';
+		options.hoursToLive = -8760;
+	    }
 
-		else if (typeof value !== 'string'){
-//						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
-//							
-//							value = JSON.stringify(value);
-//						}
-//						else {
-//							throw new Error('cookies.set() received non-string value and could not serialize.');
-//						}
-			
-			value = store.stringify(value);
-		}
+	    else if (typeof value !== 'string'){
+                //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
+                //							
+                //							value = JSON.stringify(value);
+                //						}
+                //						else {
+                //							throw new Error('cookies.set() received non-string value and could not serialize.');
+                //						}
+		
+		value = store.stringify(value);
+	    }
 
 
-		var optionsString = assembleOptionsString(options);
+	    var optionsString = assembleOptionsString(options);
 
-		document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
+	    document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
 	};
 	
 	/**
@@ -423,24 +423,24 @@ var cookie = (function() {
 	 * @return void
 	 */
 	constructor.prototype.del = function(cookieName, options) {
-		var allCookies = {}, name;
+	    var allCookies = {}, name;
 
-		if(typeof options !== 'object' || options === null) {
-			options = {};
-		}
+	    if(typeof options !== 'object' || options === null) {
+		options = {};
+	    }
 
-		if(typeof cookieName === 'boolean' && cookieName === true) {
-			allCookies = this.get();
-		}
-		else if(typeof cookieName === 'string') {
-			allCookies[cookieName] = true;
-		}
+	    if(typeof cookieName === 'boolean' && cookieName === true) {
+		allCookies = this.get();
+	    }
+	    else if(typeof cookieName === 'string') {
+		allCookies[cookieName] = true;
+	    }
 
-		for(name in allCookies) {
-			if(typeof name === 'string' && name !== '') {
-				this.set(name, null, options);
-			}
+	    for(name in allCookies) {
+		if(typeof name === 'string' && name !== '') {
+		    this.set(name, null, options);
 		}
+	    }
 	};
 	
 	/**
@@ -450,16 +450,16 @@ var cookie = (function() {
 	 * @return Boolean
 	 */
 	constructor.prototype.test = function() {
-		var returnValue = false, testName = 'cT', testValue = 'data';
+	    var returnValue = false, testName = 'cT', testValue = 'data';
 
-		this.set(testName, testValue);
+	    this.set(testName, testValue);
 
-		if(this.get(testName) === testValue) {
-			this.del(testName);
-			returnValue = true;
-		}
+	    if(this.get(testName) === testValue) {
+		this.del(testName);
+		returnValue = true;
+	    }
 
-		return returnValue;
+	    return returnValue;
 	};
 	
 	/**
@@ -470,37 +470,37 @@ var cookie = (function() {
 	 * @return void
 	 */
 	constructor.prototype.setOptions = function(options) {
-		if(typeof options !== 'object') {
-			options = null;
-		}
+	    if(typeof options !== 'object') {
+		options = null;
+	    }
 
-		defaultOptions = resolveOptions(options);
+	    defaultOptions = resolveOptions(options);
 	};
 
 	return new constructor();
-})();
+    })();
 
-// if cookies are supported by the browser
-if (cookie.test()) {
+    // if cookies are supported by the browser
+    if (cookie.test()) {
 
-	store.addType("cookie", function (key, value, options) {
-		
-		if ('undefined' === typeof key) {
-			return cookie.get();
-		}
+	store.addType("cookie", function(key, value, options) {
+	    
+	    if ('undefined' === typeof key) {
+		return cookie.get();
+	    }
 
-		if ('undefined' === typeof value) {
-			return cookie.get(key);
-		}
-		
-		// Set to NULL means delete
-		if (value === null) {
-			cookie.del(key);
-			return null;
-		}
+	    if ('undefined' === typeof value) {
+		return cookie.get(key);
+	    }
+	    
+	    // Set to NULL means delete
+	    if (value === null) {
+		cookie.del(key);
+		return null;
+	    }
 
-		return cookie.set(key, value, options);		
+	    return cookie.set(key, value, options);		
 	});
-}
+    }
 
 }(this));
