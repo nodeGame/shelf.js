@@ -4,12 +4,11 @@
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- * 
  * ---
  */
-(function(exports){
+(function(exports) {
     
-    var version = '0.5';
+    var version = '5.1';
 
     var store = exports.store = function(key, value, options, type) {
 	options = options || {};
