@@ -488,7 +488,7 @@ if (!JSON) {
     }
 
     global.JSON = JSON;
-    
+
     // 10.05.2013 mod for browsers compatibility
     if (JSUS.isNodeJS()) {
         module.exports = JSON;
@@ -659,18 +659,18 @@ if (typeof JSON.retrocycle !== 'function') {
     };
 }
 /**
- * # Shelf.JS 
- * 
+ * # Shelf.JS
+ *
  * Persistent Client-Side Storage @VERSION
- * 
+ *
  * Copyright 2012 Stefano Balietti
  * GPL licenses.
- * 
+ *
  * ---
- * 
+ *
  */
 (function(exports){
-	
+
 var version = '0.3';
 
 var store = exports.store = function (key, value, options, type) {
@@ -681,7 +681,7 @@ var store = exports.store = function (key, value, options, type) {
 		return;
 	}
 	store.log('Accessing ' + type + ' storage');
-	
+
 	return store.types[type](key, value, options);
 };
 
@@ -696,8 +696,8 @@ store.types = {};
 var mainStorageType = "volatile";
 
 //if Object.defineProperty works...
-try {	
-	
+try {
+
 	Object.defineProperty(store, 'type', {
 		set: function(type){
 			if ('undefined' === typeof store.types[type]) {
@@ -725,7 +725,7 @@ store.addType = function (type, storage) {
 		options.type = type;
 		return store(key, value, options);
 	};
-	
+
 	if (!store.type || store.type === "volatile") {
 		store.type = type;
 	}
@@ -733,8 +733,8 @@ store.addType = function (type, storage) {
 
 // TODO: create unit test
 store.onquotaerror = undefined;
-store.error = function() {	
-	console.log("shelf quota exceeded"); 
+store.error = function() {
+	console.log("shelf quota exceeded");
 	if ('function' === typeof store.onquotaerror) {
 		store.onquotaerror(null);
 	}
@@ -744,7 +744,7 @@ store.log = function(text) {
 	if (store.verbosity > 0) {
 		console.log('Shelf v.' + version + ': ' + text);
 	}
-	
+
 };
 
 store.isPersistent = function() {
@@ -754,7 +754,7 @@ store.isPersistent = function() {
 };
 
 //if Object.defineProperty works...
-try {	
+try {
 	Object.defineProperty(store, 'persistent', {
 		set: function(){},
 		get: store.isPersistent,
@@ -772,7 +772,7 @@ store.decycle = function(o) {
 	}
 	return o;
 };
-    
+
 store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 		o = JSON.retrocycle(o);
@@ -784,7 +784,7 @@ store.stringify = function(o) {
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
 		throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
-	
+
 	o = store.decycle(o);
 	return JSON.stringify(o);
 };
@@ -800,7 +800,7 @@ store.parse = function(o) {
 			store.log(o);
 		}
 	}
-	
+
 	o = store.retrocycle(o);
 	return o;
 };
@@ -808,16 +808,16 @@ store.parse = function(o) {
 // ## In-memory storage
 // ### fallback for all browsers to enable the API even if we can't persist data
 (function() {
-	
+
 	var memory = {},
 		timeout = {};
-	
+
 	function copy(obj) {
 		return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-		
+
 		if (!key) {
 			return copy(memory);
 		}
@@ -851,13 +851,13 @@ store.parse = function(o) {
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## Cookie storage for Shelf.js
- * 
+ *
  */
 
 (function(exports) {
 
 var store = exports.store;
-	
+
 if (!store) {
 	console.log('cookie.shelf.js: shelf.js core not found. Cookie storage not available.');
 	return;
@@ -869,14 +869,14 @@ if ('undefined' === typeof window) {
 }
 
 var cookie = (function() {
-	
+
 	var resolveOptions, assembleOptionsString, parseCookies, constructor, defaultOptions = {
 		expiresAt: null,
 		path: '/',
 		domain:  null,
 		secure: false
 	};
-	
+
 	/**
 	* resolveOptions - receive an options object and ensure all options are present and valid, replacing with defaults where necessary
 	*
@@ -886,7 +886,7 @@ var cookie = (function() {
 	* @return Object complete and valid options object
 	*/
 	resolveOptions = function(options){
-		
+
 		var returnValue, expireDate;
 
 		if(typeof options !== 'object' || options === null){
@@ -924,7 +924,7 @@ var cookie = (function() {
 
 		return returnValue;
 	};
-	
+
 	/**
 	* assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
 	*
@@ -943,7 +943,7 @@ var cookie = (function() {
 			(options.secure === true ? '; secure' : '')
 		);
 	};
-	
+
 	/**
 	* parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
 	*
@@ -981,7 +981,7 @@ var cookie = (function() {
 
 	constructor = function(){};
 
-	
+
 	/**
 	 * get - get one, several, or all cookies
 	 *
@@ -990,7 +990,7 @@ var cookie = (function() {
 	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
 	 */
 	constructor.prototype.get = function(cookieName) {
-		
+
 		var returnValue, item, cookies = parseCookies();
 
 		if(typeof cookieName === 'string') {
@@ -1013,7 +1013,7 @@ var cookie = (function() {
 
 		return returnValue;
 	};
-	
+
 	/**
 	 * filter - get array of cookies whose names match the provided RegExp
 	 *
@@ -1036,7 +1036,7 @@ var cookie = (function() {
 
 		return returnValue;
 	};
-	
+
 	/**
 	 * set - set or delete a cookie with desired options
 	 *
@@ -1058,13 +1058,13 @@ var cookie = (function() {
 
 		else if (typeof value !== 'string'){
 //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
-//							
+//
 //							value = JSON.stringify(value);
 //						}
 //						else {
 //							throw new Error('cookies.set() received non-string value and could not serialize.');
 //						}
-			
+
 			value = store.stringify(value);
 		}
 
@@ -1073,7 +1073,7 @@ var cookie = (function() {
 
 		document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
 	};
-	
+
 	/**
 	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
 	 *
@@ -1102,7 +1102,7 @@ var cookie = (function() {
 			}
 		}
 	};
-	
+
 	/**
 	 * test - test whether the browser is accepting cookies
 	 *
@@ -1121,7 +1121,7 @@ var cookie = (function() {
 
 		return returnValue;
 	};
-	
+
 	/**
 	 * setOptions - set default options for calls to cookie methods
 	 *
@@ -1144,7 +1144,7 @@ var cookie = (function() {
 if (cookie.test()) {
 
 	store.addType("cookie", function (key, value, options) {
-		
+
 		if ('undefined' === typeof key) {
 			return cookie.get();
 		}
@@ -1152,36 +1152,36 @@ if (cookie.test()) {
 		if ('undefined' === typeof value) {
 			return cookie.get(key);
 		}
-		
+
 		// Set to NULL means delete
 		if (value === null) {
 			cookie.del(key);
 			return null;
 		}
 
-		return cookie.set(key, value, options);		
+		return cookie.set(key, value, options);
 	});
 }
 
 }(this));
 /**
  * ## Amplify storage for Shelf.js
- * 
+ *
  * ---
- * 
+ *
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
- * 
- * Important! When updating to next Amplify.JS release, remember to change 
- * 
+ *
+ * Important! When updating to next Amplify.JS release, remember to change
+ *
  * JSON.stringify -> store.stringify
- * 
+ *
  * to keep support for ciclyc objects
- * 
+ *
  */
 
 (function(exports) {
 
-var store = exports.store;	
+var store = exports.store;
 
 if (!store) {
 	console.log('amplify.shelf.js: shelf.js core not found. Amplify storage not available.');
@@ -1194,7 +1194,7 @@ if ('undefined' === typeof window) {
 }
 
 //var rprefix = /^__shelf__/;
-var regex = new RegExp("^" + store.name); 
+var regex = new RegExp("^" + store.name);
 function createFromStorageInterface( storageType, storage ) {
 	store.addType( storageType, function( key, value, options ) {
 		var storedValue, parsed, i, remove,
@@ -1418,12 +1418,12 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
 /**
  * ## File System storage for Shelf.js
- * 
+ *
  * ### Available only in Node.JS
  */
 
 (function(exports) {
-	
+
 var store = exports.store;
 
 if (!store) {
@@ -1472,29 +1472,29 @@ var fs = require('fs'),
 
 // https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy.js
 //var copyFile = function(srcFile, destFile, cb) {
-//	
+//
 //    var fdr, fdw;
-//    
+//
 //    fdr = fs.createReadStream(srcFile, {
 //    	flags: 'r'
 //    });
 ////    fs.flockSync(fdr, 'sh');
-//    
+//
 //    fdw = fs.createWriteStream(destFile, {
 //    	flags: 'w'
 //    });
-//    
+//
 ////    fs.flockSync(fdw, 'ex');
-//    		
+//
 //	fdr.on('end', function() {
 ////      fs.flockSync(fdr, 'un');
 //    });
-//	
+//
 //    fdw.on('close', function() {
 ////        fs.flockSync(fdw, 'un');
 //    	if (cb) cb(null);
 //    });
-//    
+//
 //    fdr.pipe(fdw);
 //};
 
@@ -1525,7 +1525,7 @@ var fs = require('fs'),
 //		if (e) throw e;
 ////		fs.unlinkSync(tmp_copy);
 //		fs.unlink(tmp_copy, function (err) {
-//			if (err) throw err;  
+//			if (err) throw err;
 //		});
 //		return true;
 //	});
@@ -1558,40 +1558,40 @@ var timeout = {};
 
 
 var overwrite = function (fileName, items) {
-	
+
 	if (isLocked()) {
 		addToQueue(this);
 		return false;
 	}
-	
+
 	locked();
-	
+
 //	console.log('OW: ' + counter++);
-	
+
 	var file = fileName || store.filename;
 	if (!file) {
 		store.log('You must specify a valid file.', 'ERR');
 		return false;
 	}
-	
+
 	var tmp_copy = path.dirname(file) + '/.' + path.basename(file);
 	copyFileSync(file, tmp_copy);
-	
+
 	var s = store.stringify(items);
 
 	// removing leading { and trailing }
 	s = s.substr(1, s = s.substr(0, s.legth-1));
-	
+
 	fs.writeFileSync(file, s, 'utf-8');
 	fs.unlinkSync(tmp_copy);
-	
+
 //	console.log('UNLINK ' + counter);
-	
-	
+
+
 	unlocked();
-	
+
 	clearQueue();
-	return true;	
+	return true;
 };
 
 
@@ -1604,11 +1604,11 @@ if ('undefined' !== typeof fs.appendFileSync) {
 			return false;
 		}
 		if (!key) return;
-		
+
 		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-		
+
 		return fs.appendFileSync(file, item, 'utf-8');
-	};	
+	};
 }
 else {
 	// node < 0.8
@@ -1619,9 +1619,9 @@ else {
 			return false;
 		}
 		if (!key) return;
-		
+
 		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-		
+
 
 
 		var fd = fs.openSync(file, 'a', '0666');
@@ -1639,22 +1639,22 @@ var load = function (fileName, key) {
 	}
 
 	var s = fs.readFileSync(file, 'utf-8');
-	
+
 //	console.log('BEFORE removing end')
 //	console.log(s)
-	
-	
+
+
 	s = s.substr(0, s.length-2); // removing last ',' and /n
-	
+
 //	console.log('BEFORE PARSING')
 //	console.log(s)
-	
+
 	var items = store.parse('{' + s + '}');
-	
+
 //	console.log('PARSED')
 //	console.log(items)
-	
-	return (key) ? items[key] : items; 
+
+	return (key) ? items[key] : items;
 
 };
 
@@ -1670,10 +1670,10 @@ var deleteVariable = function (fileName, key) {
 };
 
 store.addType("fs", function(key, value, options) {
-	
+
 	var filename = options.file || store.filename;
-	
-	if (!key) { 
+
+	if (!key) {
 		return load(filename);
 	}
 
@@ -1690,10 +1690,10 @@ store.addType("fs", function(key, value, options) {
 		deleteVariable(filename, key);
 		return null;
 	}
-	
+
 	// save item
 	save(filename, key, value);
-	
+
 	if (options.expires) {
 		timeout[key] = setTimeout(function() {
 			deleteVariable(filename, key);

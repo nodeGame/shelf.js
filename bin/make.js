@@ -40,9 +40,9 @@ program
   	.action(function(env, options){
 		build(options);
 });
-   
 
-program  
+
+program
 .command('multibuild')
 .description('Creates pre-defined shelf.js builds')
 .action(function(){
@@ -67,7 +67,7 @@ program
 		lib: ['fs'],
 		output: "shelf-fs",
 	});
-	
+
 });
 
 // Parsing options

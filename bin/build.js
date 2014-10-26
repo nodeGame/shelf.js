@@ -14,42 +14,42 @@ var buildName = function(lib) {
 };
 
 function buildIt(options) {
-	
+
 	console.log('Building Shelf.js v.' + version + ' with:');
-	
+
 //	console.log(options)
-	
+
 	// output file
 	var out = options.output || "shelf";
-	
+
 	if (path.extname(out) === '.js') {
 		out = path.basename(out, '.js');
 	}
-	
-	
-	// Defining variables	
+
+
+	// Defining variables
 	var rootDir = path.resolve(__dirname, '..') + '/';
 	var libDir = rootDir + 'lib/';
 	var distDir =  rootDir + 'build/';
-		
+
 	//JSON support
 	var JSONDir = rootDir + 'vendor/JSON/';
-	
+
 	var shelf_json = [
-	  JSONDir + "json2.js",           
+	  JSONDir + "json2.js",
 	];
-	
-	
+
+
 	//cyclic objects support
 	var shelf_cycle = [
-	  rootDir + "external/cycle.js",           
+	  rootDir + "external/cycle.js",
 	];
-	
+
 	// shelf
 	var shelf = [
-	  rootDir + "shelf.js",           
+	  rootDir + "shelf.js",
 	];
-	
+
 	//shelf libs
 	var shelflibs = {};
 	var files = fs.readdirSync(libDir);
@@ -60,35 +60,35 @@ function buildIt(options) {
 		}
 	}
 
-	
-	
+
+
 	// CREATING build array
 	var files = [];
-	
+
 	// 0. JSON
 	if (options.json || options.all) {
 	  console.log('  - json');
 	  files = files.concat(shelf_json);
 	}
-	
+
 	// 1. Cycle
 	if (options.cycle || options.all) {
 	  console.log('  - cycle');
 	  files = files.concat(shelf_cycle);
 	}
-	
-	
+
+
 	// 2. Shelf.js
 	console.log('  - shelf.js core');
 	files = files.concat(shelf);
-	
+
 	// 3. Last: shelf libs
 
 	if (!options.lib || options.all) {
 		console.log('  - shelf.js all libs');
 		files = files.concat(J.obj2Array(shelflibs));
 	}
-	else { 
+	else {
 		var selected = options.lib;
 		for (var i in selected) {
 			if (selected.hasOwnProperty(i)) {
@@ -104,23 +104,23 @@ function buildIt(options) {
 			}
 		}
 	}
-	
+
 	// Configurations for file smooshing.
 	var config = {
 	    // VERSION : "0.0.1",
-	    
+
 	    // Use JSHINT to spot code irregularities.
 	    JSHINT_OPTS: {
 	        boss: true,
 	        forin: true,
 	        browser: true,
 	    },
-	    
+
 	    JAVASCRIPT: {
 	        DIST_DIR: '/' + distDir,
 	    }
 	};
-	
+
 	config.JAVASCRIPT[out] = files;
 
 	var run_it = function(){
@@ -144,6 +144,6 @@ function buildIt(options) {
 
 	    console.log('Shelf.js build created!');
 	};
-	
+
 	run_it();
 }
