@@ -1,14 +1,14 @@
 /**
- * # Shelf.JS 
+ * # Shelf.JS
  * Copyright 2014 Stefano Balietti
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- * 
+ *
  * ---
  */
 (function(exports){
-    
+
     var version = '0.5';
 
     var store = exports.store = function(key, value, options, type) {
@@ -19,7 +19,7 @@
 	    return;
 	}
 	store.log('Accessing ' + type + ' storage');
-	
+
 	return store.types[type](key, value, options);
     };
 
@@ -34,8 +34,8 @@
     var mainStorageType = "volatile";
 
     //if Object.defineProperty works...
-    try {	
-	
+    try {
+
 	Object.defineProperty(store, 'type', {
 	    set: function(type){
 		if ('undefined' === typeof store.types[type]) {
@@ -63,7 +63,7 @@
 	    options.type = type;
 	    return store(key, value, options);
 	};
-	
+
 	if (!store.type || store.type === "volatile") {
 	    store.type = type;
 	}
@@ -71,8 +71,8 @@
 
     // TODO: create unit test
     store.onquotaerror = undefined;
-    store.error = function() {	
-	console.log("shelf quota exceeded"); 
+    store.error = function() {
+	console.log("shelf quota exceeded");
 	if ('function' === typeof store.onquotaerror) {
 	    store.onquotaerror(null);
 	}
@@ -82,7 +82,7 @@
 	if (store.verbosity > 0) {
 	    console.log('Shelf v.' + version + ': ' + text);
 	}
-	
+
     };
 
     store.isPersistent = function() {
@@ -92,7 +92,7 @@
     };
 
     //if Object.defineProperty works...
-    try {	
+    try {
 	Object.defineProperty(store, 'persistent', {
 	    set: function(){},
 	    get: store.isPersistent,
@@ -110,7 +110,7 @@
 	}
 	return o;
     };
-    
+
     store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 	    o = JSON.retrocycle(o);
@@ -122,7 +122,7 @@
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
 	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
-	
+
 	o = store.decycle(o);
 	return JSON.stringify(o);
     };
@@ -138,7 +138,7 @@
 		store.log(o);
 	    }
 	}
-	
+
 	o = store.retrocycle(o);
 	return o;
     };
@@ -146,16 +146,16 @@
     // ## In-memory storage
     // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
-	
+
 	var memory = {},
 	timeout = {};
-	
+
 	function copy(obj) {
 	    return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-	    
+
 	    if (!key) {
 		return copy(memory);
 	    }
@@ -189,12 +189,12 @@
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## File System storage for Shelf.js
- * 
+ *
  * ### Available only in Node.JS
  */
 
 (function(exports) {
-	
+
 var store = exports.store;
 
 if (!store) {
@@ -243,29 +243,29 @@ var fs = require('fs'),
 
 // https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy.js
 //var copyFile = function(srcFile, destFile, cb) {
-//	
+//
 //    var fdr, fdw;
-//    
+//
 //    fdr = fs.createReadStream(srcFile, {
 //    	flags: 'r'
 //    });
 ////    fs.flockSync(fdr, 'sh');
-//    
+//
 //    fdw = fs.createWriteStream(destFile, {
 //    	flags: 'w'
 //    });
-//    
+//
 ////    fs.flockSync(fdw, 'ex');
-//    		
+//
 //	fdr.on('end', function() {
 ////      fs.flockSync(fdr, 'un');
 //    });
-//	
+//
 //    fdw.on('close', function() {
 ////        fs.flockSync(fdw, 'un');
 //    	if (cb) cb(null);
 //    });
-//    
+//
 //    fdr.pipe(fdw);
 //};
 
@@ -296,7 +296,7 @@ var fs = require('fs'),
 //		if (e) throw e;
 ////		fs.unlinkSync(tmp_copy);
 //		fs.unlink(tmp_copy, function (err) {
-//			if (err) throw err;  
+//			if (err) throw err;
 //		});
 //		return true;
 //	});
@@ -329,40 +329,40 @@ var timeout = {};
 
 
 var overwrite = function (fileName, items) {
-	
+
 	if (isLocked()) {
 		addToQueue(this);
 		return false;
 	}
-	
+
 	locked();
-	
+
 //	console.log('OW: ' + counter++);
-	
+
 	var file = fileName || store.filename;
 	if (!file) {
 		store.log('You must specify a valid file.', 'ERR');
 		return false;
 	}
-	
+
 	var tmp_copy = path.dirname(file) + '/.' + path.basename(file);
 	copyFileSync(file, tmp_copy);
-	
+
 	var s = store.stringify(items);
 
 	// removing leading { and trailing }
 	s = s.substr(1, s = s.substr(0, s.legth-1));
-	
+
 	fs.writeFileSync(file, s, 'utf-8');
 	fs.unlinkSync(tmp_copy);
-	
+
 //	console.log('UNLINK ' + counter);
-	
-	
+
+
 	unlocked();
-	
+
 	clearQueue();
-	return true;	
+	return true;
 };
 
 
@@ -375,11 +375,11 @@ if ('undefined' !== typeof fs.appendFileSync) {
 			return false;
 		}
 		if (!key) return;
-		
+
 		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-		
+
 		return fs.appendFileSync(file, item, 'utf-8');
-	};	
+	};
 }
 else {
 	// node < 0.8
@@ -390,9 +390,9 @@ else {
 			return false;
 		}
 		if (!key) return;
-		
+
 		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-		
+
 
 
 		var fd = fs.openSync(file, 'a', '0666');
@@ -410,22 +410,22 @@ var load = function (fileName, key) {
 	}
 
 	var s = fs.readFileSync(file, 'utf-8');
-	
+
 //	console.log('BEFORE removing end')
 //	console.log(s)
-	
-	
+
+
 	s = s.substr(0, s.length-2); // removing last ',' and /n
-	
+
 //	console.log('BEFORE PARSING')
 //	console.log(s)
-	
+
 	var items = store.parse('{' + s + '}');
-	
+
 //	console.log('PARSED')
 //	console.log(items)
-	
-	return (key) ? items[key] : items; 
+
+	return (key) ? items[key] : items;
 
 };
 
@@ -441,10 +441,10 @@ var deleteVariable = function (fileName, key) {
 };
 
 store.addType("fs", function(key, value, options) {
-	
+
 	var filename = options.file || store.filename;
-	
-	if (!key) { 
+
+	if (!key) {
 		return load(filename);
 	}
 
@@ -461,10 +461,10 @@ store.addType("fs", function(key, value, options) {
 		deleteVariable(filename, key);
 		return null;
 	}
-	
+
 	// save item
 	save(filename, key, value);
-	
+
 	if (options.expires) {
 		timeout[key] = setTimeout(function() {
 			deleteVariable(filename, key);

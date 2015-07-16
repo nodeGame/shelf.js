@@ -1,14 +1,14 @@
 /**
- * # Shelf.JS 
+ * # Shelf.JS
  * Copyright 2014 Stefano Balietti
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- * 
+ *
  * ---
  */
 (function(exports){
-    
+
     var version = '0.5';
 
     var store = exports.store = function(key, value, options, type) {
@@ -19,7 +19,7 @@
 	    return;
 	}
 	store.log('Accessing ' + type + ' storage');
-	
+
 	return store.types[type](key, value, options);
     };
 
@@ -34,8 +34,8 @@
     var mainStorageType = "volatile";
 
     //if Object.defineProperty works...
-    try {	
-	
+    try {
+
 	Object.defineProperty(store, 'type', {
 	    set: function(type){
 		if ('undefined' === typeof store.types[type]) {
@@ -63,7 +63,7 @@
 	    options.type = type;
 	    return store(key, value, options);
 	};
-	
+
 	if (!store.type || store.type === "volatile") {
 	    store.type = type;
 	}
@@ -71,8 +71,8 @@
 
     // TODO: create unit test
     store.onquotaerror = undefined;
-    store.error = function() {	
-	console.log("shelf quota exceeded"); 
+    store.error = function() {
+	console.log("shelf quota exceeded");
 	if ('function' === typeof store.onquotaerror) {
 	    store.onquotaerror(null);
 	}
@@ -82,7 +82,7 @@
 	if (store.verbosity > 0) {
 	    console.log('Shelf v.' + version + ': ' + text);
 	}
-	
+
     };
 
     store.isPersistent = function() {
@@ -92,7 +92,7 @@
     };
 
     //if Object.defineProperty works...
-    try {	
+    try {
 	Object.defineProperty(store, 'persistent', {
 	    set: function(){},
 	    get: store.isPersistent,
@@ -110,7 +110,7 @@
 	}
 	return o;
     };
-    
+
     store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 	    o = JSON.retrocycle(o);
@@ -122,7 +122,7 @@
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
 	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
-	
+
 	o = store.decycle(o);
 	return JSON.stringify(o);
     };
@@ -138,7 +138,7 @@
 		store.log(o);
 	    }
 	}
-	
+
 	o = store.retrocycle(o);
 	return o;
     };
@@ -146,16 +146,16 @@
     // ## In-memory storage
     // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
-	
+
 	var memory = {},
 	timeout = {};
-	
+
 	function copy(obj) {
 	    return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-	    
+
 	    if (!key) {
 		return copy(memory);
 	    }
@@ -190,14 +190,14 @@
 /**
  * ## Cookie storage for Shelf.js
  * Copyright 2015 Stefano Balietti
- * 
+ *
  * Original library from:
  * See http://code.google.com/p/cookies/
  */
 (function(exports) {
 
     var store = exports.store;
-    
+
     if (!store) {
 	throw new Error('cookie.shelf.js: shelf.js core not found.');
     }
@@ -207,7 +207,7 @@
     }
 
     var cookie = (function() {
-	
+
 	var resolveOptions, assembleOptionsString, parseCookies, constructor;
         var defaultOptions = {
 	    expiresAt: null,
@@ -215,7 +215,7 @@
 	    domain:  null,
 	    secure: false
 	};
-	
+
 	/**
 	 * resolveOptions - receive an options object and ensure all options
          * are present and valid, replacing with defaults where necessary
@@ -226,7 +226,7 @@
 	 * @return Object complete and valid options object
 	 */
 	resolveOptions = function(options){
-	    
+
 	    var returnValue, expireDate;
 
 	    if(typeof options !== 'object' || options === null){
@@ -264,7 +264,7 @@
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
 	 *
@@ -283,7 +283,7 @@
 		    (options.secure === true ? '; secure' : '')
 	    );
 	};
-	
+
 	/**
 	 * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
 	 *
@@ -321,7 +321,7 @@
 
 	constructor = function(){};
 
-	
+
 	/**
 	 * get - get one, several, or all cookies
 	 *
@@ -330,7 +330,7 @@
 	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
 	 */
 	constructor.prototype.get = function(cookieName) {
-	    
+
 	    var returnValue, item, cookies = parseCookies();
 
 	    if(typeof cookieName === 'string') {
@@ -353,7 +353,7 @@
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * filter - get array of cookies whose names match the provided RegExp
 	 *
@@ -376,7 +376,7 @@
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * set - set or delete a cookie with desired options
 	 *
@@ -398,13 +398,13 @@
 
 	    else if (typeof value !== 'string'){
                 //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
-                //							
+                //
                 //							value = JSON.stringify(value);
                 //						}
                 //						else {
                 //							throw new Error('cookies.set() received non-string value and could not serialize.');
                 //						}
-		
+
 		value = store.stringify(value);
 	    }
 
@@ -413,7 +413,7 @@
 
 	    document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
 	};
-	
+
 	/**
 	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
 	 *
@@ -442,7 +442,7 @@
 		}
 	    }
 	};
-	
+
 	/**
 	 * test - test whether the browser is accepting cookies
 	 *
@@ -461,7 +461,7 @@
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * setOptions - set default options for calls to cookie methods
 	 *
@@ -484,7 +484,7 @@
     if (cookie.test()) {
 
 	store.addType("cookie", function(key, value, options) {
-	    
+
 	    if ('undefined' === typeof key) {
 		return cookie.get();
 	    }
@@ -492,14 +492,14 @@
 	    if ('undefined' === typeof value) {
 		return cookie.get(key);
 	    }
-	    
+
 	    // Set to NULL means delete
 	    if (value === null) {
 		cookie.del(key);
 		return null;
 	    }
 
-	    return cookie.set(key, value, options);		
+	    return cookie.set(key, value, options);
 	});
     }
 

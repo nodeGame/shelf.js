@@ -1,14 +1,14 @@
 /**
- * # Shelf.JS 
+ * # Shelf.JS
  * Copyright 2014 Stefano Balietti
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- * 
+ *
  * ---
  */
 (function(exports){
-    
+
     var version = '0.5';
 
     var store = exports.store = function(key, value, options, type) {
@@ -19,7 +19,7 @@
 	    return;
 	}
 	store.log('Accessing ' + type + ' storage');
-	
+
 	return store.types[type](key, value, options);
     };
 
@@ -34,8 +34,8 @@
     var mainStorageType = "volatile";
 
     //if Object.defineProperty works...
-    try {	
-	
+    try {
+
 	Object.defineProperty(store, 'type', {
 	    set: function(type){
 		if ('undefined' === typeof store.types[type]) {
@@ -63,7 +63,7 @@
 	    options.type = type;
 	    return store(key, value, options);
 	};
-	
+
 	if (!store.type || store.type === "volatile") {
 	    store.type = type;
 	}
@@ -71,8 +71,8 @@
 
     // TODO: create unit test
     store.onquotaerror = undefined;
-    store.error = function() {	
-	console.log("shelf quota exceeded"); 
+    store.error = function() {
+	console.log("shelf quota exceeded");
 	if ('function' === typeof store.onquotaerror) {
 	    store.onquotaerror(null);
 	}
@@ -82,7 +82,7 @@
 	if (store.verbosity > 0) {
 	    console.log('Shelf v.' + version + ': ' + text);
 	}
-	
+
     };
 
     store.isPersistent = function() {
@@ -92,7 +92,7 @@
     };
 
     //if Object.defineProperty works...
-    try {	
+    try {
 	Object.defineProperty(store, 'persistent', {
 	    set: function(){},
 	    get: store.isPersistent,
@@ -110,7 +110,7 @@
 	}
 	return o;
     };
-    
+
     store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 	    o = JSON.retrocycle(o);
@@ -122,7 +122,7 @@
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
 	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
-	
+
 	o = store.decycle(o);
 	return JSON.stringify(o);
     };
@@ -138,7 +138,7 @@
 		store.log(o);
 	    }
 	}
-	
+
 	o = store.retrocycle(o);
 	return o;
     };
@@ -146,16 +146,16 @@
     // ## In-memory storage
     // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
-	
+
 	var memory = {},
 	timeout = {};
-	
+
 	function copy(obj) {
 	    return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-	    
+
 	    if (!key) {
 		return copy(memory);
 	    }
@@ -189,11 +189,11 @@
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## Amplify storage for Shelf.js
- * 
+ *
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
- * 
- * Important! When updating to next Amplify.JS release, remember to change: 
- * 
+ *
+ * Important! When updating to next Amplify.JS release, remember to change:
+ *
  * - JSON.stringify -> store.stringify to keep support for cyclic objects
  * - JSON.parse -> store.parse (cyclic objects)
  * - store.name -> store.prefix (check)
@@ -204,7 +204,7 @@
  */
 (function(exports) {
 
-    var store = exports.store;	
+    var store = exports.store;
 
     if (!store) {
 	throw new Error('amplify.shelf.js: shelf.js core not found.');

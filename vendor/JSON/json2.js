@@ -488,7 +488,7 @@ if (!JSON) {
     }
 
     global.JSON = JSON;
-    
+
     // 10.05.2013 mod for browsers compatibility
     if (JSUS.isNodeJS()) {
         module.exports = JSON;

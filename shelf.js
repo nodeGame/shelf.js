@@ -1,5 +1,5 @@
 /**
- * # Shelf.JS 
+ * # Shelf.JS
  * Copyright 2014 Stefano Balietti
  * GPL licenses.
  *
@@ -7,7 +7,7 @@
  * ---
  */
 (function(exports) {
-    
+
     var version = '5.1';
     var store, mainStorageType;
 
@@ -19,12 +19,12 @@
             options.type : store.type;
 
         if (!type || !store.types[type]) {
-            store.log('Cannot save/load value. Invalid storage type selected: ' +
-                      type, 'ERR');
+            store.log('Cannot save/load value. Invalid storage type ' +
+                      'selected: ' + type, 'ERR');
             return;
         }
         store.log('Accessing ' + type + ' storage');
-        
+
         return store.types[type](key, value, options);
     };
 
@@ -36,11 +36,11 @@
     store.types = {};
 
 
-    
+
 
     //if Object.defineProperty works...
-    try {       
-        
+    try {
+
         Object.defineProperty(store, 'type', {
             set: function(type) {
                 if ('undefined' === typeof store.types[type]) {
@@ -69,7 +69,7 @@
             options.type = type;
             return store(key, value, options);
         };
-        
+
         if (!store.type || store.type === "volatile") {
             store.type = type;
         }
@@ -77,8 +77,8 @@
 
     // TODO: create unit test
     store.onquotaerror = undefined;
-    store.error = function() {  
-        console.log("shelf quota exceeded"); 
+    store.error = function() {
+        console.log("shelf quota exceeded");
         if ('function' === typeof store.onquotaerror) {
             store.onquotaerror(null);
         }
@@ -88,7 +88,7 @@
         if (store.verbosity > 0) {
             console.log('Shelf v.' + version + ': ' + text);
         }
-        
+
     };
 
     store.isPersistent = function() {
@@ -98,7 +98,7 @@
     };
 
     //if Object.defineProperty works...
-    try {       
+    try {
         Object.defineProperty(store, 'persistent', {
             set: function(){},
             get: store.isPersistent,
@@ -116,7 +116,7 @@
         }
         return o;
     };
-    
+
     store.retrocycle = function(o) {
         if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
             o = JSON.retrocycle(o);
@@ -129,7 +129,7 @@
             throw new Error('JSON.stringify not found. Received non-string' +
                             'value and could not serialize.');
         }
-        
+
         o = store.decycle(o);
         return JSON.stringify(o);
     };
@@ -145,7 +145,7 @@
                 store.log(o);
             }
         }
-        
+
         o = store.retrocycle(o);
         return o;
     };
@@ -153,16 +153,16 @@
     // ## In-memory storage
     // ### fallback to enable the API even if we can't persist data
     (function() {
-        
+
         var memory = {},
         timeout = {};
-        
+
         function copy(obj) {
             return store.parse(store.stringify(obj));
         }
 
         store.addType("volatile", function(key, value, options) {
-            
+
             if (!key) {
                 return copy(memory);
             }
@@ -194,6 +194,6 @@
     }());
 
 }(
-    'undefined' !== typeof module && 'undefined' !== typeof module.exports ? 
+    'undefined' !== typeof module && 'undefined' !== typeof module.exports ?
         module.exports : this
 ));
