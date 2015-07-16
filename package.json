@@ -2,7 +2,6 @@
     "name": "shelf.js"
   , "description": "A modular, powerful wrapper library for persistent objects in the browser and Node.js"
   , "version": "0.5.1"
-  , "main" : "shelf.js"
   , "homepage": "http://nodegame.org"
   , "keywords": ["persistance", "localStorage", "decycle", "browser storage", "storage", "database"]
   , "author": "Stefano Balietti <futur.dorko@gmail.com>"
@@ -11,10 +10,10 @@
     ]
   , "repository": {
         "type": "git"
-      , "url": "https://github.com/shakty/shelf.js.git"
+      , "url": "https://github.com/nodeGame/shelf.js.git"
     }
   , "dependencies": {
-      "JSUS": ">= 0.6.3",
+      "JSUS": ">= 0.9.0",
       "smoosh": "0.4.0",
       "commander": "1.0.0"
     }
@@ -22,11 +21,8 @@
       "mocha": ">= 0.3.0",
       "expect.js": ">= 0.1.2"
     }
-  , "licenses": [
-    { "type": "MIT" },
-    { "type": "GPL" }
-  ]
-  , "engines": { "node": ">= 0.6.0" }
+  , "license": "MIT"
+  , "engines": { "node": ">= 0.10.0" }
   , "scripts": {
       "test": "make test",
       "prepublish": "node bin/make.js multibuild"
