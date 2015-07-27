@@ -1,7 +1,7 @@
 {
     "name": "shelf.js"
   , "description": "A modular, powerful wrapper library for persistent objects in the browser and Node.js"
-  , "version": "0.5.1"
+  , "version": "0.5.2"
   , "homepage": "http://nodegame.org"
   , "keywords": ["persistance", "localStorage", "decycle", "browser storage", "storage", "database"]
   , "main": "shelf.js"
@@ -14,9 +14,9 @@
       , "url": "https://github.com/nodeGame/shelf.js.git"
     }
   , "dependencies": {
-      "JSUS": ">= 0.9.0",
+      "JSUS": ">= 0.10.0",
       "smoosh": "0.4.0",
-      "commander": "1.0.0"
+      "commander": ">= 2.8.1"
     }
   , "devDependencies": {
       "mocha": ">= 0.3.0",
